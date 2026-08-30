@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinBank Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .navbar {
+            background: #0f172a;
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .welcome {
+            font-size: 15px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .title {
+            margin-bottom: 25px;
+        }
+
+        .title h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .title p {
+            color: #64748b;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .balance {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .account-number {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .action-box {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .action-box h2 {
+            margin-bottom: 15px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 13px;
+            margin-bottom: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .transactions {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .transactions h2 {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .empty {
+            text-align: center;
+            color: #64748b;
+            padding: 25px;
+        }
+
+        @media (max-width: 750px) {
+            .cards,
+            .actions {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 18px 20px;
+            }
+
+            .container {
+                margin-top: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="logo">🏦 FinBank</div>
+        <div class="welcome">Welcome to your dashboard</div>
+    </div>
+
+    <div class="container">
+
+        <div class="title">
+            <h1>Dashboard</h1>
+            <p>Manage your account and transactions.</p>
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>Available Balance</h3>
+                <div class="balance" id="balance">₹0.00</div>
+            </div>
+
+            <div class="card">
+                <h3>Account Number</h3>
+                <div class="account-number" id="accountNumber">
+                    Loading...
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Account Status</h3>
+                <div class="account-number">
+                    Active
+                </div>
+            </div>
+
+        </div>
+
+        <div class="actions">
+
+            <div class="action-box">
+                <h2>Deposit Money</h2>
+
+                <input
+                    type="number"
+                    id="depositAmount"
+                    placeholder="Enter amount"
+                >
+
+                <button onclick="depositMoney()">
+                    Deposit
+                </button>
+            </div>
+
+            <div class="action-box">
+                <h2>Withdraw Money</h2>
+
+                <input
+                    type="number"
+                    id="withdrawAmount"
+                    placeholder="Enter amount"
+                >
+
+                <button onclick="withdrawMoney()">
+                    Withdraw
+                </button>
+            </div>
+
+        </div>
+
+        <div class="transactions">
+
+            <h2>Recent Transactions</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody id="transactionTable">
+                    <tr>
+                        <td colspan="4" class="empty">
+                            Loading transactions...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        const ACCOUNT_API =
+            "http://127.0.0.1:8000/api/accounts/";
+
+        const TRANSACTION_API =
+            "http://127.0.0.1:8000/api/transactions/";
+
+        let accountData = null;
+
+
+        // Load account information
+        async function loadAccount() {
+
+            try {
+
+                const response = await fetch(ACCOUNT_API);
+
+                const data = await response.json();
+
+                if (data.length > 0) {
+
+                    accountData = data[0];
+
+                    document.getElementById("balance").innerText =
+                        "₹" + accountData.balance;
+
+                    document.getElementById("accountNumber").innerText =
+                        accountData.account_number;
+                }
+
+            } catch (error) {
+
+                console.log("Account API error:", error);
+
+            }
+        }
+
+
+        // Load transactions
+        async function loadTransactions() {
+
+            try {
+
+                const response = await fetch(TRANSACTION_API);
+
+                const data = await response.json();
+
+                const table =
+                    document.getElementById("transactionTable");
+
+                table.innerHTML = "";
+
+                if (data.length === 0) {
+
+                    table.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="empty">
+                                No transactions yet.
+                            </td>
+                        </tr>
+                    `;
+
+                    return;
+                }
+
+                data.forEach(transaction => {
+
+                    const row = document.createElement("tr");
+
+                    row.innerHTML = `
+                        <td>${transaction.transaction_type}</td>
+                        <td>₹${transaction.amount}</td>
+                        <td>${transaction.description || "-"}</td>
+                        <td>${transaction.created_at}</td>
+                    `;
+
+                    table.appendChild(row);
+
+                });
+
+            } catch (error) {
+
+                console.log("Transaction API error:", error);
+
+            }
+        }
+ 
+      function withdrawMoney() {
+    const amount =
+        document.getElementById("withdrawAmount").value;
+
+    if (!amount || amount <= 0) {
+        alert("Enter a valid amount.");
+        return;
+    }
+
+    fetch(TRANSACTION_API, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            account: accountData.id,
+            transaction_type: "Withdrawal",
+            amount: amount,
+            description: "Money withdrawn"
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Withdrawal failed");
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert("Withdrawal successful!");
+
+        document.getElementById("withdrawAmount").value = "";
+
+        loadAccount();
+        loadTransactions();
+    })
+    .catch(error => {
+        console.error("Withdrawal error:", error);
+        alert("Withdrawal failed.");
+    });
+}
+   
+
+        loadAccount();
+        loadTransactions();
+
+    </script>
+
+</body>
+</html>
