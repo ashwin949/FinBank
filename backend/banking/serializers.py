@@ -12,3 +12,23 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = '__all__'
+
+def validate(self, data):
+
+        account = data["account"]
+
+        transaction_type = data["transaction_type"]
+
+        amount = data["amount"]
+
+        if transaction_type == "WITHDRAWAL":
+
+            if account.balance < amount:
+
+                raise serializers.ValidationError(
+
+                    "Insufficient balance."
+
+                )
+
+        return data
