@@ -1,6 +1,6 @@
+from django.db import transaction
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
-from django.db import transaction
 
 from .models import Account, Transaction
 from .serializers import AccountSerializer, TransactionSerializer
@@ -18,37 +18,63 @@ class TransactionViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def perform_create(self, serializer):
 
+        transaction_type = serializer.validated_data["transaction_type"]
+        amount = serializer.validated_data["amount"]
+
         account = Account.objects.select_for_update().get(
             id=serializer.validated_data["account"].id
         )
 
-        transaction_type = serializer.validated_data["transaction_type"]
-        amount = serializer.validated_data["amount"]
-
         if amount <= 0:
-            raise ValidationError(
-                "Amount must be greater than zero."
-            )
+            raise ValidationError("Amount must be greater than zero.")
 
         if transaction_type == "DEPOSIT":
 
             account.balance += amount
 
+            account.save(update_fields=["balance"])
+
+            serializer.save()
+
         elif transaction_type == "WITHDRAWAL":
 
             if account.balance < amount:
-                raise ValidationError(
-                    "Insufficient balance."
-                )
+                raise ValidationError("Insufficient balance.")
 
             account.balance -= amount
 
+            account.save(update_fields=["balance"])
+
+            serializer.save()
+
         elif transaction_type == "TRANSFER":
 
-            raise ValidationError(
-                "Transfer functionality will be added in the next step."
+            to_account = serializer.validated_data.get("to_account")
+
+            if not to_account:
+                raise ValidationError(
+                    "Receiver account is required for transfer."
+                )
+
+            if account.id == to_account.id:
+                raise ValidationError(
+                    "Cannot transfer money to the same account."
+                )
+
+            receiver = Account.objects.select_for_update().get(
+                id=to_account.id
             )
 
-        account.save(update_fields=["balance"])
+            if account.balance < amount:
+                raise ValidationError("Insufficient balance.")
 
-        serializer.save()
+            account.balance -= amount
+            receiver.balance += amount
+
+            account.save(update_fields=["balance"])
+            receiver.save(update_fields=["balance"])
+
+            serializer.save()
+
+        else:
+            raise ValidationError("Invalid transaction type.")
