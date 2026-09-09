@@ -1,19 +1,31 @@
 from django.db import transaction
+from django.db.models import Q
+
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Account, Transaction
 from .serializers import AccountSerializer, TransactionSerializer
 
 
 class AccountViewSet(viewsets.ModelViewSet):
-    queryset = Account.objects.all()
     serializer_class = AccountSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Account.objects.filter(user=self.request.user)
 
 
 class TransactionViewSet(viewsets.ModelViewSet):
-    queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Transaction.objects.filter(
+            Q(account__user=self.request.user) |
+            Q(to_account__user=self.request.user)
+        )
 
     @transaction.atomic
     def perform_create(self, serializer):

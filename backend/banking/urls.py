@@ -3,7 +3,7 @@ from .views import AccountViewSet, TransactionViewSet
 
 router = DefaultRouter()
 
-router.register(r'accounts', AccountViewSet)
-router.register(r'transactions', TransactionViewSet)
+router.register(r'accounts', AccountViewSet, basename='account')
+router.register(r'transactions', TransactionViewSet, basename='transaction')
 
 urlpatterns = router.urls
