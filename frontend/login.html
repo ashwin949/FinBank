@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FinBank Login</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f7fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-box {
+            width: 400px;
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.10);
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+
+        p {
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #message {
+            margin-top: 15px;
+            text-align: center;
+            color: #dc2626;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-box">
+
+        <h1>FinBank</h1>
+
+        <p>Login to access your banking dashboard.</p>
+
+        <input
+            type="text"
+            id="username"
+            placeholder="Username"
+        >
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Password"
+        >
+
+        <button onclick="login()">
+            Login
+        </button>
+
+        <div id="message"></div>
+
+    </div>
+
+    <script>
+
+        const LOGIN_API =
+            "http://127.0.0.1:8000/api/token/";
+
+        async function login() {
+
+            const username =
+                document.getElementById("username").value;
+
+            const password =
+                document.getElementById("password").value;
+
+            const message =
+                document.getElementById("message");
+
+            if (!username || !password) {
+                message.innerText =
+                    "Please enter username and password.";
+                return;
+            }
+
+            message.innerText = "Logging in...";
+
+            try {
+
+                const response = await fetch(LOGIN_API, {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    message.innerText =
+                        data.detail || "Invalid username or password.";
+                    return;
+                }
+
+                localStorage.setItem(
+                    "access_token",
+                    data.access
+                );
+
+                localStorage.setItem(
+                    "refresh_token",
+                    data.refresh
+                );
+
+                window.location.href = "index.html";
+
+            } catch (error) {
+
+                console.error("Login error:", error);
+
+                message.innerText =
+                    "Cannot connect to FinBank server.";
+            }
+        }
+
+    </script>
+
+</body>
+</html>

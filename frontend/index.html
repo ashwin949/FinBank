@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -34,6 +34,24 @@
 
         .welcome {
             font-size: 15px;
+        }
+
+        .login-box {
+            max-width: 400px;
+            margin: 80px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .login-box h1 {
+            margin-bottom: 10px;
+        }
+
+        .login-box p {
+            color: #64748b;
+            margin-bottom: 20px;
         }
 
         .container {
@@ -103,7 +121,7 @@
             margin-bottom: 15px;
         }
 
-        input, select {
+        input {
             width: 100%;
             padding: 13px;
             margin-bottom: 12px;
@@ -125,6 +143,16 @@
 
         button:hover {
             background: #1d4ed8;
+        }
+
+        .logout {
+            width: auto;
+            padding: 8px 15px;
+            background: #dc2626;
+        }
+
+        .logout:hover {
+            background: #b91c1c;
         }
 
         .transactions {
@@ -160,6 +188,10 @@
             padding: 25px;
         }
 
+        .hidden {
+            display: none;
+        }
+
         @media (max-width: 750px) {
             .cards,
             .actions {
@@ -179,234 +211,97 @@
 
 <body>
 
-    <div class="navbar">
-        <div class="logo">🏦 FinBank</div>
-        <div class="welcome">Welcome to your dashboard</div>
+    <!-- LOGIN -->
+
+    <div id="loginPage" class="login-box">
+
+        <h1>FinBank</h1>
+
+        <p>Login to access your banking dashboard.</p>
+
+        <input
+            type="text"
+            id="username"
+            placeholder="Username"
+        >
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Password"
+        >
+
+        <button onclick="login()">
+            Login
+        </button>
+
     </div>
 
-    <div class="container">
 
-        <div class="title">
-            <h1>Dashboard</h1>
-            <p>Manage your account and transactions.</p>
-        </div>
+    <!-- DASHBOARD -->
 
-        <div class="cards">
+    <div id="dashboardPage" class="hidden">
 
-            <div class="card">
-                <h3>Available Balance</h3>
-                <div class="balance" id="balance">₹0.00</div>
+        <div class="navbar">
+
+            <div class="logo">
+                FinBank
             </div>
 
-            <div class="card">
-                <h3>Account Number</h3>
-                <div class="account-number" id="accountNumber">
-                    Loading...
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>Account Status</h3>
-                <div class="account-number">
-                    Active
-                </div>
-            </div>
-
-        </div>
-
-        <div class="actions">
-
-            <div class="action-box">
-                <h2>Deposit Money</h2>
-
-                <input
-                    type="number"
-                    id="depositAmount"
-                    placeholder="Enter amount"
-                >
-
-                <button onclick="depositMoney()">
-                    Deposit
-                </button>
-            </div>
-
-            <div class="action-box">
-                <h2>Withdraw Money</h2>
-
-                <input
-                    type="number"
-                    id="withdrawAmount"
-                    placeholder="Enter amount"
-                >
-
-                <button onclick="withdrawMoney()">
-                    Withdraw
+            <div class="welcome">
+                Welcome to your dashboard
+                <button class="logout" onclick="logout()">
+                    Logout
                 </button>
             </div>
 
         </div>
 
-        <div class="transactions">
 
-            <h2>Recent Transactions</h2>
+        <div class="container">
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Amount</th>
-                        <th>Description</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
+            <div class="title">
 
-                <tbody id="transactionTable">
-                    <tr>
-                        <td colspan="4" class="empty">
-                            Loading transactions...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                <h1>Dashboard</h1>
 
-        </div>
+                <p>
+                    Manage your account and transactions.
+                </p>
 
-    </div>
-
-    <script>
-
-        const ACCOUNT_API =
-            "http://127.0.0.1:8000/api/accounts/";
-
-        const TRANSACTION_API =
-            "http://127.0.0.1:8000/api/transactions/";
-
-        let accountData = null;
+            </div>
 
 
-        // Load account information
-        async function loadAccount() {
+            <!-- ACCOUNT CARDS -->
 
-            try {
+            <div class="cards">
 
-                const response = await fetch(ACCOUNT_API);
+                <div class="card">
 
-                const data = await response.json();
+                    <h3>
+                        Available Balance
+                    </h3>
 
-                if (data.length > 0) {
+                    <div
+                        class="balance"
+                        id="balance"
+                    >
+                        ₹0.00
+                    </div>
 
-                    accountData = data[0];
-
-                    document.getElementById("balance").innerText =
-                        "₹" + accountData.balance;
-
-                    document.getElementById("accountNumber").innerText =
-                        accountData.account_number;
-                }
-
-            } catch (error) {
-
-                console.log("Account API error:", error);
-
-            }
-        }
+                </div>
 
 
-        // Load transactions
-        async function loadTransactions() {
+                <div class="card">
 
-            try {
+                    <h3>
+                        Account Number
+                    </h3>
 
-                const response = await fetch(TRANSACTION_API);
+                    <div
+                        class="account-number"
+                        id="accountNumber"
+                    >
+                        Loading...
+                    </div>
 
-                const data = await response.json();
-
-                const table =
-                    document.getElementById("transactionTable");
-
-                table.innerHTML = "";
-
-                if (data.length === 0) {
-
-                    table.innerHTML = `
-                        <tr>
-                            <td colspan="4" class="empty">
-                                No transactions yet.
-                            </td>
-                        </tr>
-                    `;
-
-                    return;
-                }
-
-                data.forEach(transaction => {
-
-                    const row = document.createElement("tr");
-
-                    row.innerHTML = `
-                        <td>${transaction.transaction_type}</td>
-                        <td>₹${transaction.amount}</td>
-                        <td>${transaction.description || "-"}</td>
-                        <td>${transaction.created_at}</td>
-                    `;
-
-                    table.appendChild(row);
-
-                });
-
-            } catch (error) {
-
-                console.log("Transaction API error:", error);
-
-            }
-        }
- 
-      function withdrawMoney() {
-    const amount =
-        document.getElementById("withdrawAmount").value;
-
-    if (!amount || amount <= 0) {
-        alert("Enter a valid amount.");
-        return;
-    }
-
-    fetch(TRANSACTION_API, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            account: accountData.id,
-            transaction_type: "Withdrawal",
-            amount: amount,
-            description: "Money withdrawn"
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Withdrawal failed");
-        }
-        return response.json();
-    })
-    .then(data => {
-        alert("Withdrawal successful!");
-
-        document.getElementById("withdrawAmount").value = "";
-
-        loadAccount();
-        loadTransactions();
-    })
-    .catch(error => {
-        console.error("Withdrawal error:", error);
-        alert("Withdrawal failed.");
-    });
-}
-   
-
-        loadAccount();
-        loadTransactions();
-
-    </script>
-
-</body>
-</html>
+                </div>
