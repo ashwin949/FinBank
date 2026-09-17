@@ -5,377 +5,457 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FinBank | Dashboard</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Segoe UI", Arial, sans-serif;
-        }
+    </head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Arial, sans-serif;
+    }
 
-        body {
-            background: #f1f5f9;
-            color: #0f172a;
-        }
+    body {
+        background: #f5f7fb;
+        color: #172033;
+    }
 
-        header {
-            background: linear-gradient(135deg, #0f172a, #1e3a8a);
-            color: white;
-            padding: 22px 6%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    header {
+        background: #ffffff;
+        padding: 18px 6%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e8edf5;
+        box-shadow: 0 2px 12px rgba(30, 41, 59, 0.04);
+    }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
-        .brand-icon {
-            background: #3b82f6;
-            width: 42px;
-            height: 42px;
-            display: grid;
-            place-items: center;
-            border-radius: 12px;
-            font-size: 22px;
-            font-weight: bold;
-        }
+   .brand-logo {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    border-radius: 12px;
+  }
+    header h1 {
+        color: #172554;
+        font-size: 25px;
+        font-weight: 750;
+    }
 
-        header h1 {
-            font-size: 25px;
-        }
+    header p {
+        color: #64748b;
+        font-size: 12px;
+        margin-top: 2px;
+    }
 
-        header p {
-            font-size: 12px;
-            color: #bfdbfe;
-        }
+    .logout-btn {
+        border: 1px solid #dbe3ef;
+        background: #ffffff;
+        color: #334155;
+        padding: 11px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+    }
 
-        .logout-btn {
-            border: 1px solid #93c5fd;
-            background: transparent;
-            color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+    .logout-btn:hover {
+        background: #fee2e2;
+        color: #dc2626;
+        border-color: #fecaca;
+    }
 
-        .logout-btn:hover {
-            background: #ef4444;
-            border-color: #ef4444;
-        }
+    .container {
+        max-width: 1250px;
+        margin: 35px auto;
+        padding: 0 22px;
+    }
 
-        .container {
-            max-width: 1250px;
-            margin: 35px auto;
-            padding: 0 22px;
-        }
+    .welcome {
+        margin-bottom: 28px;
+    }
 
-        .welcome {
-            margin-bottom: 28px;
-        }
+    .welcome h2 {
+        color: #172033;
+        font-size: 29px;
+        margin-bottom: 8px;
+        font-weight: 750;
+    }
 
-        .welcome h2 {
-            font-size: 28px;
-            margin-bottom: 7px;
-        }
+    .welcome p {
+        color: #64748b;
+        font-size: 15px;
+    }
 
-        .welcome p {
-            color: #64748b;
-        }
+    .summary {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 35px;
+    }
 
+    .card {
+        min-height: 155px;
+        padding: 26px;
+        border-radius: 18px;
+        background: #ffffff;
+        border: 1px solid #e8edf5;
+        box-shadow: 0 8px 25px rgba(30, 41, 59, 0.05);
+    }
+
+    .balance-card {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        color: white;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .balance-card::after {
+        content: "";
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        right: -70px;
+        top: -70px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.09);
+    }
+
+    .card h3 {
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 18px;
+    }
+
+    .balance-card h3 {
+        color: #dbeafe;
+    }
+
+    .card p {
+        color: #172554;
+        font-size: 27px;
+        font-weight: 750;
+        word-break: break-word;
+    }
+
+    .balance-card p {
+        color: #ffffff;
+        font-size: 35px;
+    }
+
+    .card-label {
+        display: inline-block;
+        margin-top: 15px;
+        color: #dbeafe;
+        font-size: 12px;
+    }
+
+    .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #16a34a !important;
+        font-size: 22px !important;
+    }
+
+    .status::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        background: #22c55e;
+        border-radius: 50%;
+    }
+
+    .section-title {
+        margin-bottom: 18px;
+        color: #172033;
+        font-size: 22px;
+        font-weight: 750;
+    }
+
+    .actions {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+        margin-bottom: 35px;
+    }
+
+    .action-box {
+        background: #ffffff;
+        padding: 26px;
+        border-radius: 18px;
+        border: 1px solid #e8edf5;
+        box-shadow: 0 8px 25px rgba(30, 41, 59, 0.05);
+        transition: 0.3s;
+    }
+
+    .action-box:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(30, 41, 59, 0.09);
+    }
+
+    .action-box {
+        border-top: 4px solid #2563eb;
+    }
+
+    .withdraw-box {
+        border-top-color: #ef4444;
+    }
+
+    .transfer-box {
+        border-top-color: #16a34a;
+    }
+
+    .action-icon {
+        width: 50px;
+        height: 50px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        background: #eff6ff;
+        font-size: 25px;
+        margin-bottom: 17px;
+    }
+
+    .withdraw-box .action-icon {
+        background: #fef2f2;
+    }
+
+    .transfer-box .action-icon {
+        background: #f0fdf4;
+    }
+
+    .action-box h2 {
+        color: #172033;
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+
+    .action-box p {
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    input {
+        width: 100%;
+        padding: 13px 14px;
+        margin-bottom: 12px;
+        border: 1px solid #dbe3ef;
+        border-radius: 10px;
+        background: #f8fafc;
+        color: #172033;
+        font-size: 14px;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    input:focus {
+        background: #ffffff;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px #dbeafe;
+    }
+
+    .action-box button {
+        width: 100%;
+        padding: 13px;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-size: 14px;
+        font-weight: 650;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .action-box button:hover {
+        transform: translateY(-2px);
+        opacity: 0.92;
+    }
+
+    .deposit-btn {
+        background: #2563eb;
+    }
+
+    .withdraw-btn {
+        background: #ef4444;
+    }
+
+    .transfer-btn {
+        background: #16a34a;
+    }
+
+    .message {
+        min-height: 18px;
+        margin-top: 12px;
+        text-align: center;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .success {
+        color: #16a34a;
+    }
+
+    .error {
+        color: #dc2626;
+    }
+
+    .transactions {
+        background: #ffffff;
+        padding: 26px;
+        border-radius: 18px;
+        border: 1px solid #e8edf5;
+        box-shadow: 0 8px 25px rgba(30, 41, 59, 0.05);
+        overflow-x: auto;
+    }
+
+    .table-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .table-heading h2 {
+        color: #172033;
+        font-size: 21px;
+    }
+
+    .table-heading span {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 650px;
+    }
+
+    th,
+    td {
+        padding: 16px;
+        border-bottom: 1px solid #edf1f7;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    th {
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    td {
+        color: #334155;
+    }
+
+    tr:hover {
+        background: #f8fafc;
+    }
+
+    footer {
+        text-align: center;
+        padding: 30px;
+        color: #94a3b8;
+        font-size: 13px;
+    }
+
+    @media (max-width: 950px) {
         .summary {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 28px;
-        }
-
-        .card {
-            padding: 25px;
-            border-radius: 18px;
-            min-height: 145px;
-            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
+            grid-template-columns: repeat(2, 1fr);
         }
 
         .balance-card {
-            background: linear-gradient(135deg, #1d4ed8, #172554);
-            color: white;
-        }
-
-        .balance-card h3,
-        .balance-card p {
-            color: white;
-        }
-
-        .card:not(.balance-card) {
-            background: white;
-        }
-
-        .card h3 {
-            font-size: 14px;
-            color: #64748b;
-            margin-bottom: 18px;
-            font-weight: 500;
-        }
-
-        .card p {
-            font-size: 27px;
-            font-weight: 700;
-            color: #172554;
-            word-break: break-word;
-        }
-
-        .balance-card p {
-            font-size: 34px;
-        }
-
-        .card-label {
-            display: inline-block;
-            margin-top: 14px;
-            font-size: 12px;
-            color: #bfdbfe;
-        }
-
-        .status {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #16a34a !important;
-        }
-
-        .status::before {
-            content: "";
-            width: 10px;
-            height: 10px;
-            background: #22c55e;
-            border-radius: 50%;
-        }
-
-        .section-title {
-            margin-bottom: 18px;
-            font-size: 21px;
+            grid-column: span 2;
         }
 
         .actions {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 600px) {
+        header {
+            padding: 16px 20px;
         }
 
-        .action-box {
-            background: white;
-            padding: 25px;
-            border-radius: 18px;
-            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
-            border-top: 4px solid #3b82f6;
+        header h1 {
+            font-size: 21px;
         }
 
-        .action-box.withdraw-box {
-            border-top-color: #ef4444;
+        header p {
+            font-size: 10px;
         }
 
-        .action-box.transfer-box {
-            border-top-color: #22c55e;
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 22px;
         }
 
-        .action-icon {
-            font-size: 28px;
-            margin-bottom: 14px;
+        .logout-btn {
+            padding: 9px 13px;
+            font-size: 12px;
         }
 
-        .action-box h2 {
-            font-size: 20px;
-            margin-bottom: 8px;
+        .container {
+            margin-top: 25px;
+            padding: 0 15px;
         }
 
-        .action-box p {
-            color: #64748b;
-            font-size: 14px;
-            margin-bottom: 20px;
+        .welcome h2 {
+            font-size: 23px;
         }
 
-        input {
-            width: 100%;
-            padding: 13px 14px;
-            margin-bottom: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 9px;
-            font-size: 14px;
-            outline: none;
-            transition: 0.3s;
+        .summary {
+            grid-template-columns: 1fr;
         }
 
-        input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px #dbeafe;
+        .balance-card {
+            grid-column: span 1;
         }
 
-        .action-box button {
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 9px;
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
+        .card p,
+        .balance-card p {
+            font-size: 27px;
         }
 
-        .action-box button:hover {
-            transform: translateY(-2px);
-            opacity: 0.9;
-        }
-
-        .deposit-btn {
-            background: #2563eb;
-        }
-
-        .withdraw-btn {
-            background: #ef4444;
-        }
-
-        .transfer-btn {
-            background: #16a34a;
-        }
-
-        .message {
-            min-height: 18px;
-            margin-top: 12px;
-            text-align: center;
-            font-size: 13px;
-        }
-
-        .success {
-            color: #16a34a;
-        }
-
-        .error {
-            color: #dc2626;
-        }
-
+        .action-box,
         .transactions {
-            background: white;
-            padding: 25px;
-            border-radius: 18px;
-            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
-            overflow-x: auto;
+            padding: 20px;
         }
 
         .table-heading {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+            align-items: flex-start;
+            gap: 8px;
+            flex-direction: column;
         }
-
-        .table-heading span {
-            color: #64748b;
-            font-size: 13px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 650px;
-        }
-
-        th,
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #e2e8f0;
-            text-align: left;
-            font-size: 14px;
-        }
-
-        th {
-            background: #f8fafc;
-            color: #64748b;
-            font-size: 12px;
-            text-transform: uppercase;
-        }
-
-        td {
-            color: #334155;
-        }
-
-        tr:hover {
-            background: #f8fafc;
-        }
-
-        footer {
-            text-align: center;
-            padding: 25px;
-            color: #64748b;
-            font-size: 13px;
-        }
-
-        @media (max-width: 950px) {
-            .summary {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .balance-card {
-                grid-column: span 2;
-            }
-
-            .actions {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 600px) {
-            header {
-                padding: 18px 20px;
-            }
-
-            header h1 {
-                font-size: 21px;
-            }
-
-            .container {
-                margin-top: 25px;
-                padding: 0 15px;
-            }
-
-            .welcome h2 {
-                font-size: 23px;
-            }
-
-            .summary {
-                grid-template-columns: 1fr;
-            }
-
-            .balance-card {
-                grid-column: span 1;
-            }
-
-            .card p,
-            .balance-card p {
-                font-size: 26px;
-            }
-
-            .action-box,
-            .transactions {
-                padding: 20px;
-            }
-        }
-    </style>
-</head>
+    }
+</style>
 
 <body>
 
 <header>
     <div class="brand">
-        <div class="brand-icon">F</div>
-        <div>
-            <h1>FinBank</h1>
-            <p>Personal Banking Dashboard</p>
+    <img src="finbank-logo.png"
+         alt="FinBank Logo"
+         class="brand-logo">
+
+    <div>
+         <h1>FinBank</h1>
+         <p>Personal Banking Dashboard</p>
         </div>
     </div>
 
@@ -385,7 +465,7 @@
 <div class="container">
 
     <div class="welcome">
-        <h2>Welcome back, Ashwin 👋</h2>
+        <h2>Welcome back, <span id="userName">Loading...</span> 👋</h2>
         <p>Manage your money securely from one place.</p>
     </div>
 
@@ -418,7 +498,8 @@
             <h2>Deposit</h2>
             <p>Add money to your bank account.</p>
 
-            <input type="number" id="depositAmount" placeholder="Enter amount">
+            <input type="number" id="depositAmount"
+                   placeholder="Enter amount" min="1">
 
             <button class="deposit-btn" onclick="depositMoney()">
                 Deposit Money
@@ -432,7 +513,8 @@
             <h2>Withdraw</h2>
             <p>Withdraw money from your account.</p>
 
-            <input type="number" id="withdrawAmount" placeholder="Enter amount">
+            <input type="number" id="withdrawAmount"
+                   placeholder="Enter amount" min="1">
 
             <button class="withdraw-btn" onclick="withdrawMoney()">
                 Withdraw Money
@@ -446,17 +528,11 @@
             <h2>Transfer</h2>
             <p>Send money to another bank account.</p>
 
-            <input
-                type="text"
-                id="transferAccount"
-                placeholder="Recipient account number"
-            >
+            <input type="text" id="transferAccount"
+                   placeholder="Recipient account number">
 
-            <input
-                type="number"
-                id="transferAmount"
-                placeholder="Enter amount"
-            >
+            <input type="number" id="transferAmount"
+                   placeholder="Enter amount" min="1">
 
             <button class="transfer-btn" onclick="transferMoney()">
                 Transfer Money
@@ -500,7 +576,9 @@
 </footer>
 
 <script>
+
     const API_BASE = "http://127.0.0.1:8000/api";
+
     const token = localStorage.getItem("access_token");
 
     let currentAccount = null;
@@ -509,7 +587,9 @@
         window.location.href = "login.html";
     }
 
+    // API request helper
     async function apiRequest(endpoint, method = "GET", data = null) {
+
         const options = {
             method: method,
             headers: {
@@ -533,6 +613,7 @@
         }
 
         if (!response.ok) {
+
             let errorMessage = "Something went wrong.";
 
             if (result.detail) {
@@ -549,58 +630,209 @@
         return result;
     }
 
-    async function loadAccount() {
-        try {
-            const result = await apiRequest("/accounts/");
+    // Decode JWT token
+    function getTokenPayload() {
 
-            if (Array.isArray(result)) {
-                currentAccount = result[0];
-            } else if (result.results && Array.isArray(result.results)) {
-                currentAccount = result.results[0];
-            } else {
-                currentAccount = result;
+        try {
+
+            const parts = token.split(".");
+
+            if (parts.length !== 3) {
+                return {};
             }
 
-            if (!currentAccount) {
+            let base64 = parts[1]
+                .replace(/-/g, "+")
+                .replace(/_/g, "/");
+
+            while (base64.length % 4 !== 0) {
+                base64 += "=";
+            }
+
+            return JSON.parse(atob(base64));
+
+        } catch (error) {
+
+            console.error("Token decoding error:", error);
+
+            return {};
+        }
+    }
+
+    // Get logged-in user ID
+    function getLoggedInUserId() {
+
+        const payload = getTokenPayload();
+
+        return payload.user_id ||
+               payload.user ||
+               payload.sub ||
+               null;
+    }
+
+    // Convert API response into an array
+    function getAccountList(result) {
+
+        if (Array.isArray(result)) {
+            return result;
+        }
+
+        if (result && Array.isArray(result.results)) {
+            return result.results;
+        }
+
+        if (result && result.id) {
+            return [result];
+        }
+
+        return [];
+    }
+
+    // Check whether account belongs to logged-in user
+    function accountBelongsToUser(account, userId) {
+
+        if (userId === null || userId === undefined) {
+            return false;
+        }
+
+        if (account.user && typeof account.user === "object") {
+
+            return String(account.user.id) === String(userId);
+        }
+
+        return String(account.user) === String(userId);
+    }
+
+    // Get username from API response
+    function getUserName(account) {
+
+        const payload = getTokenPayload();
+
+        if (account.user_name) {
+            return account.user_name;
+        }
+
+        if (account.username) {
+            return account.username;
+        }
+
+        if (account.user_username) {
+            return account.user_username;
+        }
+
+        if (account.user && typeof account.user === "object") {
+
+            return account.user.username ||
+                   account.user.first_name ||
+                   account.user.name ||
+                   "User";
+        }
+
+        if (payload.username) {
+            return payload.username;
+        }
+
+        if (payload.name) {
+            return payload.name;
+        }
+
+        return "User";
+    }
+
+    // Load logged-in user's account
+    async function loadAccount() {
+
+        try {
+
+            const result = await apiRequest("/accounts/");
+
+            const accounts = getAccountList(result);
+
+            const loggedInUserId = getLoggedInUserId();
+
+            if (accounts.length === 0) {
                 throw new Error("Account information not found.");
             }
 
-            document.getElementById("balance").innerText =
-                "₹" + Number(currentAccount.balance).toLocaleString("en-IN");
+            // Find the account belonging to the logged-in user
+            currentAccount = accounts.find(account =>
+                accountBelongsToUser(account, loggedInUserId)
+            );
 
+            /*
+             * If the API returns only one account,
+             * use that account.
+             */
+            if (!currentAccount && accounts.length === 1) {
+                currentAccount = accounts[0];
+            }
+
+            if (!currentAccount) {
+                throw new Error("Your account was not found.");
+            }
+
+            // Display username
+            document.getElementById("userName").innerText =
+                getUserName(currentAccount);
+
+            // Display balance
+            document.getElementById("balance").innerText =
+                "₹" + Number(currentAccount.balance || 0)
+                .toLocaleString("en-IN");
+
+            // Display account number
             document.getElementById("accountNumber").innerText =
                 currentAccount.account_number || "Not available";
 
         } catch (error) {
+
             console.error("Account loading error:", error);
 
+            document.getElementById("userName").innerText = "User";
+
             document.getElementById("balance").innerText = "Unavailable";
+
             document.getElementById("accountNumber").innerText = "Unavailable";
         }
     }
 
+    // Deposit money
     async function depositMoney() {
-        const amount = Number(document.getElementById("depositAmount").value);
+
+        const amount = Number(
+            document.getElementById("depositAmount").value
+        );
+
         const message = document.getElementById("depositMessage");
 
         if (!amount || amount <= 0) {
+
             message.className = "message error";
             message.innerText = "Enter a valid deposit amount.";
+
             return;
         }
 
         if (!currentAccount || !currentAccount.id) {
+
             message.className = "message error";
             message.innerText = "Account information is not loaded.";
+
             return;
         }
 
         try {
+
             await apiRequest("/transactions/", "POST", {
+
                 account: currentAccount.id,
+
                 transaction_type: "DEPOSIT",
+
                 amount: amount,
+
                 description: "Cash deposit"
+
             });
 
             message.className = "message success";
@@ -612,33 +844,49 @@
             await loadTransactions();
 
         } catch (error) {
+
             message.className = "message error";
             message.innerText = error.message;
         }
     }
 
+    // Withdraw money
     async function withdrawMoney() {
-        const amount = Number(document.getElementById("withdrawAmount").value);
+
+        const amount = Number(
+            document.getElementById("withdrawAmount").value
+        );
+
         const message = document.getElementById("withdrawMessage");
 
         if (!amount || amount <= 0) {
+
             message.className = "message error";
             message.innerText = "Enter a valid withdrawal amount.";
+
             return;
         }
 
         if (!currentAccount || !currentAccount.id) {
+
             message.className = "message error";
             message.innerText = "Account information is not loaded.";
+
             return;
         }
 
         try {
+
             await apiRequest("/transactions/", "POST", {
+
                 account: currentAccount.id,
+
                 transaction_type: "WITHDRAWAL",
+
                 amount: amount,
+
                 description: "Cash withdrawal"
+
             });
 
             message.className = "message success";
@@ -650,19 +898,32 @@
             await loadTransactions();
 
         } catch (error) {
+
             message.className = "message error";
             message.innerText = error.message;
         }
     }
 
+    // Transfer money
     async function transferMoney() {
-        const recipient = document.getElementById("transferAccount").value.trim();
-        const amount = Number(document.getElementById("transferAmount").value);
+
+        const recipient = document
+            .getElementById("transferAccount")
+            .value.trim();
+
+        const amount = Number(
+            document.getElementById("transferAmount").value
+        );
+
         const message = document.getElementById("transferMessage");
 
         if (!recipient || !amount || amount <= 0) {
+
             message.className = "message error";
-            message.innerText = "Enter a valid recipient account number and amount.";
+
+            message.innerText =
+                "Enter a valid recipient account number and amount.";
+
             return;
         }
 
@@ -671,30 +932,42 @@
         }
 
         if (!currentAccount || !currentAccount.id) {
+
             message.className = "message error";
+
             message.innerText = "Account information is not loaded.";
+
             return;
         }
 
         try {
+
             await apiRequest("/transactions/", "POST", {
+
                 account: currentAccount.id,
+
                 transaction_type: "TRANSFER",
+
                 amount: amount,
+
                 to_account: recipient,
+
                 description: "Money transfer"
+
             });
 
             message.className = "message success";
             message.innerText = "Transfer successful.";
 
             document.getElementById("transferAccount").value = "";
+
             document.getElementById("transferAmount").value = "";
 
             await loadAccount();
             await loadTransactions();
 
         } catch (error) {
+
             console.error("Transfer error:", error);
 
             message.className = "message error";
@@ -702,10 +975,13 @@
         }
     }
 
+    // Load transaction history
     async function loadTransactions() {
+
         const table = document.getElementById("transactionTable");
 
         try {
+
             const result = await apiRequest("/transactions/");
 
             const transactions = Array.isArray(result)
@@ -715,24 +991,33 @@
             table.innerHTML = "";
 
             if (transactions.length === 0) {
+
                 table.innerHTML = `
                     <tr>
                         <td colspan="4">No transactions found.</td>
                     </tr>
                 `;
+
                 return;
             }
 
             transactions.forEach(transaction => {
+
                 const row = document.createElement("tr");
 
                 row.innerHTML = `
                     <td>${transaction.transaction_type || "-"}</td>
-                    <td>₹${Number(transaction.amount || 0).toLocaleString("en-IN")}</td>
+
+                    <td>₹${Number(transaction.amount || 0)
+                        .toLocaleString("en-IN")}</td>
+
                     <td>${transaction.description || "-"}</td>
+
                     <td>${
                         transaction.created_at
-                            ? new Date(transaction.created_at).toLocaleString()
+                            ? new Date(
+                                transaction.created_at
+                              ).toLocaleString()
                             : "-"
                     }</td>
                 `;
@@ -741,6 +1026,7 @@
             });
 
         } catch (error) {
+
             table.innerHTML = `
                 <tr>
                     <td colspan="4">${error.message}</td>
@@ -749,14 +1035,21 @@
         }
     }
 
+    // Logout
     function logout() {
+
         localStorage.removeItem("access_token");
+
         localStorage.removeItem("refresh_token");
+
         window.location.href = "login.html";
     }
 
+    // Start dashboard
     loadAccount();
+
     loadTransactions();
+
 </script>
 
 </body>

@@ -1,14 +1,18 @@
 from rest_framework import serializers
 from .models import Account, Transaction
 
-
 class AccountSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(
+        source="user.username",
+        read_only=True
+    )
 
     class Meta:
         model = Account
         fields = [
             "id",
             "user",
+            "user_name",
             "account_number",
             "balance",
             "created_at"
