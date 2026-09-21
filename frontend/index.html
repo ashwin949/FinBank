@@ -1457,14 +1457,30 @@
             }
 
             if (!response.ok) {
+                const errorData = result;
 
-                const errorMessage =
-                    result.detail ||
-                    result.error ||
-                    result.message ||
-                    "Request failed.";
+                let errorMessage =
+                    errorData.detail ||
+                    errorData.non_field_errors?.[0] ||
+                    errorData.error ||
+                    Object.values(errorData).flat()[0] ||
+                   "We couldn't process your withdrawal. Please try again.";
 
-                throw new Error(errorMessage);
+            // Professional insufficient balance message
+                if (
+                    typeof errorMessage === "string" &&
+                    (
+                        errorMessage.toLowerCase().includes("insufficient") ||
+                        errorMessage.toLowerCase().includes("not enough") ||
+                        errorMessage.toLowerCase().includes("balance")
+                    )
+                 )  {
+                    errorMessage =
+                       "Insufficient balance. Please enter an amount within your available balance.";
+                 }
+
+                 throw new Error(errorMessage);
+       
             }
 
             return result;
@@ -1819,12 +1835,27 @@
 
                 showMessage(
                     "withdrawMessage",
-                    "Enter a valid amount.",
+                    "Please enter a valid withdrawal amount.",
                     "error"
                 );
 
                 return;
             }
+
+            // Check available balance before withdrawal
+            const availableBalance = Number(
+                currentAccount.balance || 0
+            );
+
+            if (amount > availableBalance) {
+                showMessage(
+                   "withdrawMessage",
+                   `Insufficient balance. Your available balance is ${formatCurrency(availableBalance)}.`,
+                   "error"
+                );
+
+                return;
+            } 
 
             if (
                 !currentAccount ||

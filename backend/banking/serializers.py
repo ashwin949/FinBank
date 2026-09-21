@@ -3,17 +3,21 @@ from .models import Account, Transaction
 
 
 class AccountSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        source="user.username",
+        read_only=True
+    )
 
     class Meta:
         model = Account
         fields = [
             "id",
             "user",
+            "username",
             "account_number",
             "balance",
         ]
-
-
+        
 class TransactionSerializer(serializers.ModelSerializer):
 
     to_account = serializers.SlugRelatedField(
