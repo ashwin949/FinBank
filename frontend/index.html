@@ -1,2283 +1,2296 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>FinBank | Personal Banking</title>
-
-    <style>
-        /* ================================
-           GLOBAL STYLES
-        ================================= */
-
-        :root {
-            --primary: #004c8f;
-            --primary-dark: #00345f;
-            --secondary: #e7f2fb;
-            --accent: #f58220;
-            --success: #138a4b;
-            --danger: #c62828;
-            --text: #172b4d;
-            --muted: #6b778c;
-            --border: #e1e7ef;
-            --background: #f5f7fa;
-            --white: #ffffff;
-            --shadow: 0 4px 18px rgba(0, 46, 91, 0.08);
-            --radius: 12px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: "Segoe UI", Arial, sans-serif;
-            background: var(--background);
-            color: var(--text);
-            line-height: 1.5;
-        }
-
-        button,
-        input {
-            font: inherit;
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .success {
-            color: var(--success);
-        }
-
-        .error {
-            color: var(--danger);
-        }
-
-        .muted {
-            color: var(--muted);
-        }
-
-        /* ================================
-           TOP HEADER
-        ================================= */
-
-        .top-header {
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            padding: 14px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .brand-section {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .brand-logo {
-            width: 48px;
-            height: 48px;
-            object-fit: contain;
-            border-radius: 8px;
-        }
-
-        .brand-fallback {
-            width: 48px;
-            height: 48px;
-            display: grid;
-            place-items: center;
-            border-radius: 8px;
-            background: var(--primary);
-            color: white;
-            font-size: 25px;
-            font-weight: 800;
-        }
-
-        .brand-name {
-            color: var(--primary);
-            font-size: 25px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .brand-subtitle {
-            font-size: 11px;
-            color: var(--muted);
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
-
-        .notification-button {
-            border: none;
-            background: transparent;
-            color: var(--primary);
-            font-size: 23px;
-            position: relative;
-        }
-
-        .notification-dot {
-            position: absolute;
-            top: -2px;
-            right: -4px;
-            width: 8px;
-            height: 8px;
-            background: var(--accent);
-            border-radius: 50%;
-        }
-
-        .profile-section {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .profile-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-            background: var(--secondary);
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .profile-name {
-            font-size: 14px;
-            font-weight: 700;
-        }
-
-        .profile-role {
-            font-size: 11px;
-            color: var(--muted);
-        }
-
-        .logout-button {
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            background: white;
-            padding: 9px 15px;
-            border-radius: 7px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .logout-button:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* ================================
-           NAVIGATION
-        ================================= */
-
-        .navigation {
-            background: var(--primary);
-            padding: 0 5%;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            overflow-x: auto;
-        }
-
-        .nav-link {
-            padding: 15px 20px;
-            color: #dbeafe;
-            border-bottom: 3px solid transparent;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            color: white;
-            background: rgba(255, 255, 255, 0.08);
-            border-bottom-color: var(--accent);
-        }
-
-        /* ================================
-           MAIN CONTAINER
-        ================================= */
-
-        .main-container {
-            width: min(1280px, 90%);
-            margin: 30px auto;
-        }
-
-        .welcome-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .welcome-section h1 {
-            font-size: 27px;
-            color: var(--primary-dark);
-            margin-bottom: 5px;
-        }
-
-        .welcome-section p {
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        .last-login {
-            text-align: right;
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        /* ================================
-           ACCOUNT OVERVIEW
-        ================================= */
-
-        .account-grid {
-            display: grid;
-            grid-template-columns: 1.7fr 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .account-card {
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px;
-            box-shadow: var(--shadow);
-        }
-
-        .account-card.primary-card {
-            background: linear-gradient(
-                135deg,
-                var(--primary),
-                var(--primary-dark)
-            );
-            color: white;
-            border: none;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 22px;
-        }
-
-        .card-label {
-            font-size: 13px;
-            color: var(--muted);
-        }
-
-        .primary-card .card-label {
-            color: #dbeafe;
-        }
-
-        .card-icon {
-            font-size: 22px;
-        }
-
-        .balance-value {
-            font-size: 34px;
-            font-weight: 800;
-            margin-bottom: 15px;
-            letter-spacing: -0.5px;
-        }
-
-        .account-number {
-            font-size: 13px;
-            color: var(--muted);
-            word-break: break-word;
-        }
-
-        .primary-card .account-number {
-            color: #dbeafe;
-        }
-
-        .account-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            margin-top: 25px;
-            font-size: 12px;
-        }
-
-        .account-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--success);
-            font-weight: 700;
-        }
-
-        .account-status::before {
-            content: "";
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #22c55e;
-        }
-
-        .primary-card .account-status {
-            color: #bbf7d0;
-        }
-
-        .primary-card .account-status::before {
-            background: #86efac;
-        }
-
-        .small-value {
-            font-size: 25px;
-            font-weight: 800;
-            color: var(--primary-dark);
-            margin-bottom: 10px;
-            word-break: break-word;
-        }
-
-        .small-description {
-            font-size: 12px;
-            color: var(--muted);
-        }
-
-        /* ================================
-           QUICK SERVICES
-        ================================= */
-
-        .section-heading {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 18px;
-        }
-
-        .section-heading h2 {
-            font-size: 21px;
-            color: var(--primary-dark);
-        }
-
-        .section-heading span {
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .service-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .service-card {
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: white;
-            padding: 20px;
-            text-align: left;
-            transition: 0.2s;
-            box-shadow: var(--shadow);
-        }
-
-        .service-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--primary);
-        }
-
-        .service-icon {
-            width: 45px;
-            height: 45px;
-            display: grid;
-            place-items: center;
-            border-radius: 10px;
-            background: var(--secondary);
-            color: var(--primary);
-            font-size: 23px;
-            margin-bottom: 15px;
-        }
-
-        .service-card h3 {
-            font-size: 15px;
-            margin-bottom: 5px;
-        }
-
-        .service-card p {
-            font-size: 12px;
-            color: var(--muted);
-        }
-
-        /* ================================
-           OPERATIONS SECTION
-        ================================= */
-
-        .operations-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .operation-card {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px;
-            box-shadow: var(--shadow);
-        }
-
-        .operation-card h3 {
-            font-size: 19px;
-            color: var(--primary-dark);
-            margin-bottom: 8px;
-        }
-
-        .operation-card p {
-            color: var(--muted);
-            font-size: 13px;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 7px;
-            color: var(--text);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 13px;
-            border: 1px solid #cbd5e1;
-            border-radius: 7px;
-            background: white;
-            color: var(--text);
-            outline: none;
-            font-size: 13px;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--secondary);
-        }
-
-        .primary-button,
-        .danger-button,
-        .success-button {
-            width: 100%;
-            border: none;
-            border-radius: 7px;
-            padding: 12px;
-            color: white;
-            font-size: 13px;
-            font-weight: 700;
-            transition: 0.2s;
-        }
-
-        .primary-button {
-            background: var(--primary);
-        }
-
-        .danger-button {
-            background: var(--danger);
-        }
-
-        .success-button {
-            background: var(--success);
-        }
-
-        .primary-button:hover,
-        .danger-button:hover,
-        .success-button:hover {
-            opacity: 0.88;
-        }
-
-        .form-message {
-            min-height: 20px;
-            margin-top: 12px;
-            font-size: 12px;
-            text-align: center;
-        }
-
-        /* ================================
-           TRANSACTION HISTORY
-        ================================= */
-
-        .transaction-section {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-        }
-
-        .transaction-actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .refresh-button {
-            background: var(--secondary);
-            border: 1px solid #c5dff4;
-            color: var(--primary);
-            padding: 9px 14px;
-            border-radius: 7px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            min-width: 650px;
-            border-collapse: collapse;
-        }
-
-        th {
-            background: #f8fafc;
-            color: var(--muted);
-            text-align: left;
-            padding: 14px;
-            font-size: 11px;
-            text-transform: uppercase;
-            border-bottom: 1px solid var(--border);
-        }
-
-        td {
-            padding: 15px 14px;
-            font-size: 13px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        .transaction-badge {
-            display: inline-block;
-            padding: 5px 9px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .transaction-badge.deposit {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .transaction-badge.withdrawal,
-        .transaction-badge.transfer {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .transaction-badge.other {
-            background: #e2e8f0;
-            color: #334155;
-        }
-
-        .amount-positive {
-            color: var(--success);
-            font-weight: 800;
-        }
-
-        .amount-negative {
-            color: var(--danger);
-            font-weight: 800;
-        }
-
-        .completed-badge {
-            color: var(--success);
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 35px;
-            color: var(--muted);
-        }
-
-        /* ================================
-           FOOTER
-        ================================= */
-
-        footer {
-            margin-top: 35px;
-            padding: 25px 5%;
-            background: var(--primary-dark);
-            color: #dbeafe;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            font-size: 12px;
-        }
-
-        /* ================================
-           RESPONSIVE DESIGN
-        ================================= */
-
-        @media (max-width: 1050px) {
-            .account-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .primary-card {
-                grid-column: span 2;
-            }
-
-            .service-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .operations-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 650px) {
-            .top-header {
-                padding: 12px 18px;
-            }
-
-            .brand-name {
-                font-size: 21px;
-            }
-
-            .brand-subtitle,
-            .profile-role {
-                display: none;
-            }
-
-            .header-actions {
-                gap: 10px;
-            }
-
-            .profile-name {
-                display: none;
-            }
-
-            .logout-button {
-                padding: 8px 10px;
-            }
-
-            .navigation {
-                padding: 0 15px;
-            }
-
-            .nav-link {
-                padding: 13px 14px;
-                font-size: 12px;
-            }
-
-            .main-container {
-                width: 92%;
-                margin: 22px auto;
-            }
-
-            .welcome-section {
-                display: block;
-            }
-
-            .welcome-section h1 {
-                font-size: 23px;
-            }
-
-            .last-login {
-                text-align: left;
-                margin-top: 8px;
-            }
-
-            .account-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .primary-card {
-                grid-column: span 1;
-            }
-
-            .balance-value {
-                font-size: 29px;
-            }
-
-            .service-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }
-
-            .service-card {
-                padding: 15px;
-            }
-
-            .section-heading h2 {
-                font-size: 19px;
-            }
-
-            .transaction-section {
-                padding: 17px;
-            }
-
-            footer {
-                display: block;
-                text-align: center;
-            }
-
-            footer p + p {
-                margin-top: 8px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinBank | Personal Banking</title>
+
+<style>
+:root{
+    --primary:#004c8f;
+    --primary-dark:#00345f;
+    --secondary:#e7f2fb;
+    --accent:#f58220;
+    --success:#138a4b;
+    --danger:#c62828;
+    --text:#172b4d;
+    --muted:#6b778c;
+    --border:#e1e7ef;
+    --background:#f5f7fa;
+    --white:#fff;
+    --shadow:0 4px 18px rgba(0,46,91,.08);
+    --radius:12px;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:"Segoe UI",Arial,sans-serif;
+    background:var(--background);
+    color:var(--text);
+    line-height:1.5;
+}
+
+button,input{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+button:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.hidden{
+    display:none!important;
+}
+
+.top-header{
+    background:#fff;
+    border-bottom:1px solid var(--border);
+    padding:14px 5%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+}
+
+.brand-section{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-logo{
+    width:48px;
+    height:48px;
+    object-fit:contain;
+}
+
+.brand-name{
+    color:var(--primary);
+    font-size:25px;
+    font-weight:800;
+}
+
+.brand-subtitle{
+    font-size:11px;
+    color:var(--muted);
+}
+
+.header-actions{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.notification-button{
+    border:0;
+    background:transparent;
+    font-size:22px;
+}
+
+.profile-section{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.profile-avatar{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:var(--secondary);
+    color:var(--primary);
+    font-weight:700;
+}
+
+.profile-name{
+    font-size:14px;
+    font-weight:700;
+}
+
+.profile-role{
+    font-size:11px;
+    color:var(--muted);
+}
+
+.logout-button{
+    border:1px solid var(--primary);
+    color:var(--primary);
+    background:white;
+    padding:9px 15px;
+    border-radius:7px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.logout-button:hover{
+    background:var(--primary);
+    color:white;
+}
+
+.navigation{
+    background:var(--primary);
+    padding:0 5%;
+    display:flex;
+    overflow-x:auto;
+}
+
+.nav-link{
+    padding:15px 20px;
+    color:#dbeafe;
+    border-bottom:3px solid transparent;
+    font-size:14px;
+    white-space:nowrap;
+}
+
+.nav-link:hover,
+.nav-link.active{
+    color:white;
+    background:rgba(255,255,255,.08);
+    border-bottom-color:var(--accent);
+}
+
+.main-container{
+    width:min(1280px,90%);
+    margin:30px auto;
+}
+
+.welcome-section{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.welcome-section h1{
+    font-size:27px;
+    color:var(--primary-dark);
+}
+
+.welcome-section p{
+    color:var(--muted);
+    font-size:14px;
+}
+
+.last-login{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.section-heading{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.section-heading h2{
+    font-size:21px;
+    color:var(--primary-dark);
+}
+
+.section-heading span{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.account-grid{
+    display:grid;
+    grid-template-columns:1.7fr 1fr 1fr;
+    gap:20px;
+    margin-bottom:30px;
+}
+
+.account-card{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:24px;
+    box-shadow:var(--shadow);
+}
+
+.primary-card{
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    color:white;
+    border:none;
+}
+
+.card-header{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:22px;
+}
+
+.card-label{
+    font-size:13px;
+    color:var(--muted);
+}
+
+.primary-card .card-label{
+    color:#dbeafe;
+}
+
+.balance-value{
+    font-size:34px;
+    font-weight:800;
+    margin:8px 0 15px;
+}
+
+.account-number{
+    font-size:13px;
+    color:var(--muted);
+}
+
+.primary-card .account-number{
+    color:#dbeafe;
+}
+
+.account-footer{
+    display:flex;
+    justify-content:space-between;
+    margin-top:25px;
+    font-size:12px;
+}
+
+.account-status{
+    color:#22c55e;
+    font-weight:700;
+}
+
+.small-value{
+    font-size:25px;
+    font-weight:800;
+    color:var(--primary-dark);
+    margin-bottom:10px;
+}
+
+.small-description{
+    font-size:12px;
+    color:var(--muted);
+}
+
+.service-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:30px;
+}
+
+.service-card{
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    background:white;
+    padding:20px;
+    text-align:left;
+    transition:.2s;
+    box-shadow:var(--shadow);
+}
+
+.service-card:hover{
+    transform:translateY(-3px);
+    border-color:var(--primary);
+}
+
+.service-icon{
+    width:45px;
+    height:45px;
+    display:grid;
+    place-items:center;
+    border-radius:10px;
+    background:var(--secondary);
+    color:var(--primary);
+    font-size:23px;
+    margin-bottom:15px;
+}
+
+.service-card h3{
+    font-size:15px;
+    margin-bottom:5px;
+}
+
+.service-card p{
+    font-size:12px;
+    color:var(--muted);
+}
+
+.operations-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+    margin-bottom:30px;
+}
+
+.operation-card{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:24px;
+    box-shadow:var(--shadow);
+}
+
+.operation-card h3{
+    font-size:19px;
+    color:var(--primary-dark);
+    margin-bottom:8px;
+}
+
+.operation-card p{
+    color:var(--muted);
+    font-size:13px;
+    margin-bottom:20px;
+}
+
+.form-group{
+    margin-bottom:15px;
+}
+
+.form-group label{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    margin-bottom:7px;
+}
+
+.form-control{
+    width:100%;
+    padding:12px 13px;
+    border:1px solid #cbd5e1;
+    border-radius:7px;
+    background:white;
+    color:var(--text);
+    outline:none;
+    font-size:13px;
+}
+
+.form-control:focus{
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px var(--secondary);
+}
+
+/* QUICK AMOUNT BUTTONS */
+
+.quick-amounts{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-bottom:15px;
+}
+
+.quick-amount{
+    border:1px solid #c5dff4;
+    background:var(--secondary);
+    color:var(--primary);
+    border-radius:7px;
+    padding:10px 5px;
+    font-size:12px;
+    font-weight:700;
+    transition:.15s;
+}
+
+.quick-amount:hover{
+    background:#d4eafb;
+    transform:translateY(-2px);
+    box-shadow:0 3px 8px rgba(0,76,143,.15);
+}
+
+.quick-amount:active{
+    transform:scale(.94);
+}
+
+/* MAIN BUTTONS */
+
+.primary-button,
+.danger-button,
+.success-button{
+    width:100%;
+    border:0;
+    border-radius:7px;
+    padding:12px;
+    color:white;
+    font-size:13px;
+    font-weight:700;
+    transition:.2s;
+}
+
+.primary-button{
+    background:var(--primary);
+}
+
+.danger-button{
+    background:var(--danger);
+}
+
+.success-button{
+    background:var(--success);
+}
+
+.primary-button:hover,
+.danger-button:hover,
+.success-button:hover{
+    opacity:.88;
+    transform:translateY(-1px);
+}
+
+.form-message{
+    min-height:20px;
+    margin-top:12px;
+    font-size:12px;
+    text-align:center;
+}
+
+.success{
+    color:var(--success);
+}
+
+.error{
+    color:var(--danger);
+}
+
+.transaction-section{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:25px;
+    box-shadow:var(--shadow);
+}
+
+.transaction-actions{
+    display:flex;
+    gap:10px;
+}
+
+.refresh-button{
+    background:var(--secondary);
+    border:1px solid #c5dff4;
+    color:var(--primary);
+    padding:9px 14px;
+    border-radius:7px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.table-wrapper{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#f8fafc;
+    color:var(--muted);
+    text-align:left;
+    padding:14px;
+    font-size:11px;
+    text-transform:uppercase;
+    border-bottom:1px solid var(--border);
+}
+
+td{
+    padding:15px 14px;
+    font-size:13px;
+    border-bottom:1px solid var(--border);
+}
+
+tbody tr:hover{
+    background:#f8fafc;
+}
+
+.transaction-badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:700;
+}
+
+.transaction-badge.deposit{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.transaction-badge.withdrawal,
+.transaction-badge.transfer{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.amount-positive{
+    color:var(--success);
+    font-weight:800;
+}
+
+.amount-negative{
+    color:var(--danger);
+    font-weight:800;
+}
+
+.completed-badge{
+    color:var(--success);
+    font-size:12px;
+    font-weight:700;
+}
+
+.empty-state{
+    text-align:center;
+    padding:35px;
+    color:var(--muted);
+}
+
+footer{
+    margin-top:35px;
+    padding:25px 5%;
+    background:var(--primary-dark);
+    color:#dbeafe;
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+}
+
+@media(max-width:1050px){
+
+    .account-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .primary-card{
+        grid-column:span 2;
+    }
+
+    .service-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .operations-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:650px){
+
+    .top-header{
+        padding:12px 18px;
+    }
+
+    .brand-name{
+        font-size:21px;
+    }
+
+    .brand-subtitle,
+    .profile-role{
+        display:none;
+    }
+
+    .profile-name{
+        display:none;
+    }
+
+    .navigation{
+        padding:0 15px;
+    }
+
+    .nav-link{
+        padding:13px 14px;
+        font-size:12px;
+    }
+
+    .main-container{
+        width:92%;
+        margin:22px auto;
+    }
+
+    .welcome-section{
+        display:block;
+    }
+
+    .welcome-section h1{
+        font-size:23px;
+    }
+
+    .last-login{
+        margin-top:8px;
+    }
+
+    .account-grid{
+        grid-template-columns:1fr;
+    }
+
+    .primary-card{
+        grid-column:span 1;
+    }
+
+    .service-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    footer{
+        display:block;
+        text-align:center;
+    }
+}
+</style>
 </head>
 
 <body>
 
-    <!-- ================================
-         HEADER
-    ================================= -->
+<header class="top-header">
 
-    <header class="top-header">
+    <div class="brand-section">
 
-        <div class="brand-section">
-
-            <img
-                src="finbank-logo.png"
-                alt="FinBank Logo"
-                class="brand-logo"
-                onerror="this.style.display='none'; document.getElementById('brandFallback').style.display='grid';"
-            >
-
-            <div
-                id="brandFallback"
-                class="brand-fallback"
-                style="display: none;"
-            >
-                F
-            </div>
-
-            <div>
-                <div class="brand-name">FinBank</div>
-                <div class="brand-subtitle">
-                    Your trusted digital banking partner
-                </div>
-            </div>
-
-        </div>
-
-        <div class="header-actions">
-
-            <button
-                class="notification-button"
-                title="Notifications"
-                onclick="showNotificationMessage()"
-            >
-                🔔
-                <span class="notification-dot"></span>
-            </button>
-
-            <div class="profile-section">
-
-                <div class="profile-avatar" id="profileAvatar">
-                    U
-                </div>
-
-                <div>
-                    <div class="profile-name" id="profileName">
-                        Loading...
-                    </div>
-
-                    <div class="profile-role">
-                        Personal Banking
-                    </div>
-                </div>
-
-            </div>
-
-            <button
-                class="logout-button"
-                onclick="logout()"
-            >
-                Logout
-            </button>
-
-        </div>
-
-    </header>
-
-    <!-- ================================
-         NAVIGATION
-    ================================= -->
-
-    <nav class="navigation">
-
-        <a href="#" class="nav-link active">
-            Dashboard
-        </a>
-
-        <a href="#accounts" class="nav-link">
-            My Accounts
-        </a>
-
-        <a href="#services" class="nav-link">
-            Payments & Transfers
-        </a>
-
-        <a href="#transactions" class="nav-link">
-            Transaction History
-        </a>
-
-        <a href="#" class="nav-link" onclick="showComingSoon(event)">
-            Statements
-        </a>
-
-        <a href="#" class="nav-link" onclick="showComingSoon(event)">
-            Support
-        </a>
-
-    </nav>
-
-    <!-- ================================
-         MAIN CONTENT
-    ================================= -->
-
-    <main class="main-container">
-
-        <!-- WELCOME -->
-
-        <section class="welcome-section">
-
-            <div>
-                <h1>
-                    Welcome back, <span id="userName">User</span>
-                </h1>
-
-                <p>
-                    Here's your account overview for today.
-                </p>
-            </div>
-
-            <div class="last-login">
-                Last login: <span id="lastLogin">Just now</span>
-            </div>
-
-        </section>
-
-        <!-- ACCOUNT OVERVIEW -->
-
-        <section id="accounts">
-
-            <div class="section-heading">
-                <h2>Account Overview</h2>
-                <span>Updated automatically</span>
-            </div>
-
-            <div class="account-grid">
-
-                <div class="account-card primary-card">
-
-                    <div class="card-header">
-
-                        <span class="card-label">
-                            Savings Account
-                        </span>
-
-                        <span class="card-icon">
-                            💳
-                        </span>
-
-                    </div>
-
-                    <div class="card-label">
-                        Available balance
-                    </div>
-
-                    <div class="balance-value" id="balance">
-                        ₹0.00
-                    </div>
-
-                    <div class="account-number">
-                        A/C No:
-                        <strong id="accountNumber">
-                            Loading...
-                        </strong>
-                    </div>
-
-                    <div class="account-footer">
-
-                        <span class="account-status">
-                            Active
-                        </span>
-
-                        <span>
-                            INR
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div class="account-card">
-
-                    <div class="card-header">
-
-                        <span class="card-label">
-                            Account Type
-                        </span>
-
-                        <span class="card-icon">
-                            🏦
-                        </span>
-
-                    </div>
-
-                    <div class="small-value">
-                        Savings
-                    </div>
-
-                    <div class="small-description">
-                        Personal savings account
-                    </div>
-
-                </div>
-
-                <div class="account-card">
-
-                    <div class="card-header">
-
-                        <span class="card-label">
-                            Account Status
-                        </span>
-
-                        <span class="card-icon">
-                            ✓
-                        </span>
-
-                    </div>
-
-                    <div class="small-value success">
-                        Active
-                    </div>
-
-                    <div class="small-description">
-                        Your account is operational
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- QUICK SERVICES -->
-
-        <section id="services">
-
-            <div class="section-heading">
-                <h2>Quick Services</h2>
-                <span>Access frequently used banking services</span>
-            </div>
-
-            <div class="service-grid">
-
-                <button
-                    class="service-card"
-                    onclick="focusOperation('deposit')"
-                >
-
-                    <div class="service-icon">💰</div>
-
-                    <h3>Deposit Money</h3>
-
-                    <p>
-                        Add funds to your account
-                    </p>
-
-                </button>
-
-                <button
-                    class="service-card"
-                    onclick="focusOperation('withdraw')"
-                >
-
-                    <div class="service-icon">💸</div>
-
-                    <h3>Withdraw Money</h3>
-
-                    <p>
-                        Withdraw funds securely
-                    </p>
-
-                </button>
-
-                <button
-                    class="service-card"
-                    onclick="focusOperation('transfer')"
-                >
-
-                    <div class="service-icon">🔁</div>
-
-                    <h3>Fund Transfer</h3>
-
-                    <p>
-                        Transfer money to another account
-                    </p>
-
-                </button>
-
-                <button
-                    class="service-card"
-                    onclick="scrollToTransactions()"
-                >
-
-                    <div class="service-icon">📄</div>
-
-                    <h3>Transaction History</h3>
-
-                    <p>
-                        View your recent transactions
-                    </p>
-
-                </button>
-
-            </div>
-
-        </section>
-
-        <!-- BANKING OPERATIONS -->
-
-        <section>
-
-            <div class="section-heading">
-                <h2>Banking Operations</h2>
-                <span>Secure account operations</span>
-            </div>
-
-            <div class="operations-grid">
-
-                <!-- DEPOSIT -->
-
-                <div class="operation-card" id="depositOperation">
-
-                    <h3>Deposit Money</h3>
-
-                    <p>
-                        Add money to your savings account.
-                    </p>
-
-                    <div class="form-group">
-
-                        <label for="depositAmount">
-                            Amount
-                        </label>
-
-                        <input
-                            type="number"
-                            id="depositAmount"
-                            class="form-control"
-                            placeholder="Enter amount"
-                            min="1"
-                            step="0.01"
-                        >
-
-                    </div>
-
-                    <button
-                        class="primary-button"
-                        id="depositButton"
-                        onclick="depositMoney()"
-                    >
-                        Deposit Now
-                    </button>
-
-                    <div
-                        id="depositMessage"
-                        class="form-message"
-                    ></div>
-
-                </div>
-
-                <!-- WITHDRAW -->
-
-                <div class="operation-card" id="withdrawOperation">
-
-                    <h3>Withdraw Money</h3>
-
-                    <p>
-                        Withdraw money from your account.
-                    </p>
-
-                    <div class="form-group">
-
-                        <label for="withdrawAmount">
-                            Amount
-                        </label>
-
-                        <input
-                            type="number"
-                            id="withdrawAmount"
-                            class="form-control"
-                            placeholder="Enter amount"
-                            min="1"
-                            step="0.01"
-                        >
-
-                    </div>
-
-                    <button
-                        class="danger-button"
-                        id="withdrawButton"
-                        onclick="withdrawMoney()"
-                    >
-                        Withdraw Now
-                    </button>
-
-                    <div
-                        id="withdrawMessage"
-                        class="form-message"
-                    ></div>
-
-                </div>
-
-                <!-- TRANSFER -->
-
-                <div class="operation-card" id="transferOperation">
-
-                    <h3>Fund Transfer</h3>
-
-                    <p>
-                        Transfer money to another account.
-                    </p>
-
-                    <div class="form-group">
-
-                        <label for="transferAccount">
-                            Beneficiary Account Number
-                        </label>
-
-                        <input
-                            type="text"
-                            id="transferAccount"
-                            class="form-control"
-                            placeholder="Enter account number"
-                        >
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="transferAmount">
-                            Amount
-                        </label>
-
-                        <input
-                            type="number"
-                            id="transferAmount"
-                            class="form-control"
-                            placeholder="Enter amount"
-                            min="1"
-                            step="0.01"
-                        >
-
-                    </div>
-
-                    <button
-                        class="success-button"
-                        id="transferButton"
-                        onclick="transferMoney()"
-                    >
-                        Transfer Now
-                    </button>
-
-                    <div
-                        id="transferMessage"
-                        class="form-message"
-                    ></div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- TRANSACTION HISTORY -->
-
-        <section
-            id="transactions"
-            class="transaction-section"
+        <img
+            src="finbank-logo.png"
+            alt="FinBank"
+            class="brand-logo"
         >
 
-            <div class="section-heading">
+        <div>
+            <div class="brand-name">FinBank</div>
+            <div class="brand-subtitle">
+                Your trusted digital banking partner
+            </div>
+        </div>
 
-                <div>
-                    <h2>Recent Transactions</h2>
-                    <span>
-                        Review your latest account activity
-                    </span>
+    </div>
+
+    <div class="header-actions">
+
+        <button
+            class="notification-button"
+            onclick="alert('No new notifications')"
+        >
+            🔔
+        </button>
+
+        <div class="profile-section">
+
+            <div class="profile-avatar" id="profileAvatar">
+                U
+            </div>
+
+            <div>
+                <div class="profile-name" id="profileName">
+                    Loading...
                 </div>
 
-                <div class="transaction-actions">
-
-                    <button
-                        class="refresh-button"
-                        onclick="loadTransactions()"
-                    >
-                        ↻ Refresh
-                    </button>
-
+                <div class="profile-role">
+                    Personal Banking
                 </div>
+            </div>
+
+        </div>
+
+        <button
+            class="logout-button"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<nav class="navigation">
+
+    <a href="#" class="nav-link active">
+        Dashboard
+    </a>
+
+    <a href="#accounts" class="nav-link">
+        My Accounts
+    </a>
+
+    <a href="#operations" class="nav-link">
+        Payments & Transfers
+    </a>
+
+    <a href="#transactions" class="nav-link">
+        Transaction History
+    </a>
+
+    <a href="#" class="nav-link">
+        Statements
+    </a>
+
+    <a href="#" class="nav-link">
+        Support
+    </a>
+
+</nav>
+
+
+<main class="main-container">
+
+<section class="welcome-section">
+
+    <div>
+
+        <h1>
+            Welcome back,
+            <span id="userName">User</span>
+        </h1>
+
+        <p>
+            Here's your account overview for today.
+        </p>
+
+    </div>
+
+    <div class="last-login">
+
+        Last login:
+        <span id="lastLogin">Just now</span>
+
+    </div>
+
+</section>
+
+
+<section id="accounts">
+
+    <div class="section-heading">
+
+        <h2>Account Overview</h2>
+
+        <span>
+            Updated automatically
+        </span>
+
+    </div>
+
+
+    <div class="account-grid">
+
+        <div class="account-card primary-card">
+
+            <div class="card-header">
+
+                <span class="card-label">
+                    Savings Account
+                </span>
+
+                <span>
+                    💳
+                </span>
 
             </div>
 
-            <div class="table-wrapper">
+            <div class="card-label">
+                Available balance
+            </div>
 
-                <table>
+            <div
+                class="balance-value"
+                id="balance"
+            >
+                ₹0.00
+            </div>
 
-                    <thead>
+            <div class="account-number">
 
-                        <tr>
-                            <th>Transaction Type</th>
-                            <th>Amount</th>
-                            <th>Description</th>
-                            <th>Date & Time</th>
-                            <th>Status</th>
-                        </tr>
-
-                    </thead>
-
-                    <tbody id="transactionTable">
-
-                        <tr>
-                            <td
-                                colspan="5"
-                                class="empty-state"
-                            >
-                                Loading transactions...
-                            </td>
-                        </tr>
-
-                    </tbody>
-
-                </table>
+                A/C No:
+                <strong id="accountNumber">
+                    Loading...
+                </strong>
 
             </div>
 
-        </section>
+            <div class="account-footer">
 
-    </main>
+                <span class="account-status">
+                    ● Active
+                </span>
 
-    <!-- ================================
-         FOOTER
-    ================================= -->
+                <span>
+                    INR
+                </span>
 
-    <footer>
+            </div>
 
-        <p>
-            © 2026 FinBank. All rights reserved.
-        </p>
+        </div>
 
-        <p>
-            Secure demo banking application
-        </p>
 
-    </footer>
+        <div class="account-card">
 
-    <!-- ================================
-         JAVASCRIPT
-    ================================= -->
+            <div class="card-header">
 
-    <script>
+                <span class="card-label">
+                    Account Type
+                </span>
 
-        /* =================================
-           API CONFIGURATION
-        ================================= */
+                <span>
+                    🏦
+                </span>
 
-        const API_BASE = "http://127.0.0.1:8000/api";
+            </div>
 
-        let currentAccount = null;
+            <div class="small-value">
+                Savings
+            </div>
 
-        let isRequestRunning = false;
+            <div class="small-description">
+                Personal savings account
+            </div>
 
-        const accessToken = localStorage.getItem("access_token");
+        </div>
 
-        if (!accessToken) {
-            window.location.href = "login.html";
-        }
 
-        /* =================================
-           COMMON HELPERS
-        ================================= */
+        <div class="account-card">
 
-        function getCurrentToken() {
-            return localStorage.getItem("access_token");
-        }
+            <div class="card-header">
 
-        function formatCurrency(value) {
+                <span class="card-label">
+                    Account Status
+                </span>
 
-            const amount = Number(value || 0);
+                <span>
+                    ✓
+                </span>
 
-            return "₹" + amount.toLocaleString("en-IN", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-        }
+            </div>
 
-        function escapeHTML(value) {
+            <div class="small-value success">
+                Active
+            </div>
 
-            return String(value ?? "")
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
+            <div class="small-description">
+                Your account is operational
+            </div>
 
-        function showMessage(elementId, message, type) {
+        </div>
 
-            const element = document.getElementById(elementId);
+    </div>
 
-            if (!element) {
-                return;
-            }
+</section>
 
-            element.className = "form-message " + type;
 
-            element.textContent = message;
-        }
+<section>
 
-        function setButtonLoading(buttonId, isLoading, normalText) {
+    <div class="section-heading">
 
-            const button = document.getElementById(buttonId);
+        <h2>
+            Quick Services
+        </h2>
 
-            if (!button) {
-                return;
-            }
+        <span>
+            Frequently used services
+        </span>
 
-            button.disabled = isLoading;
+    </div>
 
-            button.textContent = isLoading
-                ? "Processing..."
-                : normalText;
-        }
 
-        /* =================================
-           API REQUEST HANDLER
-        ================================= */
+    <div class="service-grid">
 
-        async function apiRequest(
-            endpoint,
-            method = "GET",
-            data = null
-        ) {
+        <button
+            class="service-card"
+            onclick="focusOperation('deposit')"
+        >
 
-            const token = getCurrentToken();
+            <div class="service-icon">
+                💰
+            </div>
 
-            if (!token) {
+            <h3>
+                Deposit Money
+            </h3>
 
-                window.location.href = "login.html";
+            <p>
+                Add funds to your account
+            </p>
 
-                throw new Error("Authentication required.");
-            }
+        </button>
 
-            const headers = {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + token
-            };
 
-            const options = {
-                method: method,
-                headers: headers
-            };
+        <button
+            class="service-card"
+            onclick="focusOperation('withdraw')"
+        >
 
-            if (data !== null) {
-                options.body = JSON.stringify(data);
-            }
+            <div class="service-icon">
+                💸
+            </div>
 
-            const response = await fetch(
-                API_BASE + endpoint,
-                options
-            );
+            <h3>
+                Withdraw Money
+            </h3>
 
-            let result = {};
+            <p>
+                Withdraw funds securely
+            </p>
 
-            try {
-                result = await response.json();
-            } catch {
-                result = {};
-            }
+        </button>
 
-            if (
-                response.status === 401 ||
-                response.status === 403
-            ) {
 
-                localStorage.removeItem("access_token");
-                localStorage.removeItem("refresh_token");
+        <button
+            class="service-card"
+            onclick="focusOperation('transfer')"
+        >
 
-                alert("Your session has expired. Please log in again.");
+            <div class="service-icon">
+                🔁
+            </div>
 
-                window.location.href = "login.html";
+            <h3>
+                Fund Transfer
+            </h3>
 
-                throw new Error("Session expired.");
-            }
+            <p>
+                Transfer money to another account
+            </p>
 
-            if (!response.ok) {
-                const errorData = result;
+        </button>
 
-                let errorMessage =
-                    errorData.detail ||
-                    errorData.non_field_errors?.[0] ||
-                    errorData.error ||
-                    Object.values(errorData).flat()[0] ||
-                   "We couldn't process your withdrawal. Please try again.";
 
-            // Professional insufficient balance message
-                if (
-                    typeof errorMessage === "string" &&
-                    (
-                        errorMessage.toLowerCase().includes("insufficient") ||
-                        errorMessage.toLowerCase().includes("not enough") ||
-                        errorMessage.toLowerCase().includes("balance")
-                    )
-                 )  {
-                    errorMessage =
-                       "Insufficient balance. Please enter an amount within your available balance.";
-                 }
+        <button
+            class="service-card"
+            onclick="scrollToTransactions()"
+        >
 
-                 throw new Error(errorMessage);
-       
-            }
+            <div class="service-icon">
+                📄
+            </div>
 
-            return result;
-        }
+            <h3>
+                Transaction History
+            </h3>
 
-        /* =================================
-           JWT HELPERS
-        ================================= */
+            <p>
+                View recent transactions
+            </p>
 
-        function getTokenPayload() {
+        </button>
 
-            try {
+    </div>
 
-                const token = getCurrentToken();
+</section>
 
-                if (!token) {
-                    return {};
-                }
 
-                const parts = token.split(".");
+<section id="operations">
 
-                if (parts.length !== 3) {
-                    return {};
-                }
+    <div class="section-heading">
 
-                let base64 = parts[1]
-                    .replace(/-/g, "+")
-                    .replace(/_/g, "/");
+        <h2>
+            Banking Operations
+        </h2>
 
-                while (base64.length % 4 !== 0) {
-                    base64 += "=";
-                }
+        <span>
+            Secure account operations
+        </span>
 
-                return JSON.parse(atob(base64));
+    </div>
 
-            } catch (error) {
 
-                console.error(
-                    "Token decoding error:",
-                    error
-                );
+    <div class="operations-grid">
 
-                return {};
-            }
-        }
 
-        function getLoggedInUserId() {
+        <!-- DEPOSIT -->
 
-            const payload = getTokenPayload();
+        <div
+            class="operation-card"
+            id="depositOperation"
+        >
 
-            return String(
-                payload.user_id ||
-                payload.user ||
-                payload.sub ||
-                ""
-            );
-        }
+            <h3>
+                Deposit Money
+            </h3>
 
-        /* =================================
-           ACCOUNT HELPERS
-        ================================= */
+            <p>
+                Add money to your savings account.
+            </p>
 
-        function getAccountList(result) {
 
-            if (Array.isArray(result)) {
-                return result;
-            }
+            <div class="form-group">
 
-            if (
-                result &&
-                Array.isArray(result.results)
-            ) {
-                return result.results;
-            }
+                <label>
+                    Amount
+                </label>
 
-            if (
-                result &&
-                typeof result === "object" &&
-                result.id
-            ) {
-                return [result];
-            }
+                <input
+                    type="number"
+                    id="depositAmount"
+                    class="form-control"
+                    placeholder="Enter amount"
+                    min="1"
+                >
 
-            return [];
-        }
+            </div>
 
-        function accountBelongsToUser(
-            account,
-            userId
-        ) {
 
-            if (!account || !userId) {
-                return false;
-            }
+            <div class="quick-amounts">
 
-            if (
-                account.user &&
-                typeof account.user === "object"
-            ) {
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('depositAmount',100)"
+                >
+                    ₹100
+                </button>
 
-                return String(account.user.id) ===
-                    String(userId);
-            }
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('depositAmount',200)"
+                >
+                    ₹200
+                </button>
 
-            if (account.user !== undefined) {
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('depositAmount',500)"
+                >
+                    ₹500
+                </button>
 
-                return String(account.user) ===
-                    String(userId);
-            }
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('depositAmount',1000)"
+                >
+                    ₹1,000
+                </button>
 
-            return false;
-        }
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('depositAmount',10000)"
+                >
+                    ₹10,000
+                </button>
 
-        function getUserName(account) {
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('depositAmount',100000)"
+                >
+                    ₹1,00,000
+                </button>
 
-            const payload = getTokenPayload();
+            </div>
 
-            if (account.user_name) {
-                return account.user_name;
-            }
 
-            if (account.username) {
-                return account.username;
-            }
+            <button
+                class="primary-button"
+                id="depositButton"
+                onclick="depositMoney()"
+            >
+                Deposit Now
+            </button>
 
-            if (account.user_username) {
-                return account.user_username;
-            }
+            <div
+                id="depositMessage"
+                class="form-message"
+            ></div>
 
-            if (
-                account.user &&
-                typeof account.user === "object"
-            ) {
+        </div>
 
-                return (
-                    account.user.username ||
-                    account.user.first_name ||
-                    account.user.name ||
-                    "User"
-                );
-            }
 
-            return (
-                payload.username ||
-                payload.name ||
-                "User"
-            );
-        }
+        <!-- WITHDRAW -->
 
-        /* =================================
-           LOAD ACCOUNT
-        ================================= */
+        <div
+            class="operation-card"
+            id="withdrawOperation"
+        >
 
-        async function loadAccount() {
+            <h3>
+                Withdraw Money
+            </h3>
 
-            try {
+            <p>
+                Withdraw money from your account.
+            </p>
 
-                const result = await apiRequest(
-                    "/accounts/"
-                );
 
-                const accounts = getAccountList(result);
+            <div class="form-group">
 
-                const loggedInUserId =
-                    getLoggedInUserId();
+                <label>
+                    Amount
+                </label>
 
-                if (accounts.length === 0) {
+                <input
+                    type="number"
+                    id="withdrawAmount"
+                    class="form-control"
+                    placeholder="Enter amount"
+                    min="1"
+                >
 
-                    throw new Error(
-                        "Account information not found."
-                    );
-                }
+            </div>
 
-                currentAccount = accounts.find(
-                    account =>
-                        accountBelongsToUser(
-                            account,
-                            loggedInUserId
-                        )
-                );
 
-                if (
-                    !currentAccount &&
-                    accounts.length === 1
-                ) {
-
-                    currentAccount = accounts[0];
-                }
+            <div class="quick-amounts">
 
-                if (!currentAccount) {
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('withdrawAmount',100)"
+                >
+                    ₹100
+                </button>
 
-                    throw new Error(
-                        "Your account was not found."
-                    );
-                }
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('withdrawAmount',200)"
+                >
+                    ₹200
+                </button>
 
-                const userName = getUserName(
-                    currentAccount
-                );
-
-                document.getElementById(
-                    "userName"
-                ).textContent = userName;
-
-                document.getElementById(
-                    "profileName"
-                ).textContent = userName;
-
-                document.getElementById(
-                    "profileAvatar"
-                ).textContent =
-                    userName.charAt(0).toUpperCase();
-
-                document.getElementById(
-                    "balance"
-                ).textContent = formatCurrency(
-                    currentAccount.balance
-                );
-
-                document.getElementById(
-                    "accountNumber"
-                ).textContent =
-                    currentAccount.account_number ||
-                    "Not available";
-
-            } catch (error) {
-
-                console.error(
-                    "Account loading error:",
-                    error
-                );
-
-                document.getElementById(
-                    "userName"
-                ).textContent = "User";
-
-                document.getElementById(
-                    "profileName"
-                ).textContent = "User";
-
-                document.getElementById(
-                    "balance"
-                ).textContent = "Unavailable";
-
-                document.getElementById(
-                    "accountNumber"
-                ).textContent = "Unavailable";
-            }
-        }
-
-        /* =================================
-           DEPOSIT MONEY
-        ================================= */
-
-        async function depositMoney() {
-
-            const amount = Number(
-                document.getElementById(
-                    "depositAmount"
-                ).value
-            );
-
-            if (!amount || amount <= 0) {
-
-                showMessage(
-                    "depositMessage",
-                    "Enter a valid amount.",
-                    "error"
-                );
-
-                return;
-            }
-
-            if (
-                !currentAccount ||
-                !currentAccount.id
-            ) {
-
-                showMessage(
-                    "depositMessage",
-                    "Account information is not loaded.",
-                    "error"
-                );
-
-                return;
-            }
-
-            try {
-
-                setButtonLoading(
-                    "depositButton",
-                    true,
-                    "Deposit Now"
-                );
-
-                await apiRequest(
-                    "/transactions/",
-                    "POST",
-                    {
-                        account: currentAccount.id,
-                        transaction_type: "DEPOSIT",
-                        amount: amount,
-                        description: "Cash deposit"
-                    }
-                );
-
-                showMessage(
-                    "depositMessage",
-                    "Deposit completed successfully.",
-                    "success"
-                );
-
-                document.getElementById(
-                    "depositAmount"
-                ).value = "";
-
-                await loadAccount();
-
-                await loadTransactions();
-
-            } catch (error) {
-
-                showMessage(
-                    "depositMessage",
-                    error.message,
-                    "error"
-                );
-
-            } finally {
-
-                setButtonLoading(
-                    "depositButton",
-                    false,
-                    "Deposit Now"
-                );
-            }
-        }
-
-        /* =================================
-           WITHDRAW MONEY
-        ================================= */
-
-        async function withdrawMoney() {
-
-            const amount = Number(
-                document.getElementById(
-                    "withdrawAmount"
-                ).value
-            );
-
-            if (!amount || amount <= 0) {
-
-                showMessage(
-                    "withdrawMessage",
-                    "Please enter a valid withdrawal amount.",
-                    "error"
-                );
-
-                return;
-            }
-
-            // Check available balance before withdrawal
-            const availableBalance = Number(
-                currentAccount.balance || 0
-            );
-
-            if (amount > availableBalance) {
-                showMessage(
-                   "withdrawMessage",
-                   `Insufficient balance. Your available balance is ${formatCurrency(availableBalance)}.`,
-                   "error"
-                );
-
-                return;
-            } 
-
-            if (
-                !currentAccount ||
-                !currentAccount.id
-            ) {
-
-                showMessage(
-                    "withdrawMessage",
-                    "Account information is not loaded.",
-                    "error"
-                );
-
-                return;
-            }
-
-            try {
-
-                setButtonLoading(
-                    "withdrawButton",
-                    true,
-                    "Withdraw Now"
-                );
-
-                await apiRequest(
-                    "/transactions/",
-                    "POST",
-                    {
-                        account: currentAccount.id,
-                        transaction_type: "WITHDRAWAL",
-                        amount: amount,
-                        description: "Cash withdrawal"
-                    }
-                );
-
-                showMessage(
-                    "withdrawMessage",
-                    "Withdrawal completed successfully.",
-                    "success"
-                );
-
-                document.getElementById(
-                    "withdrawAmount"
-                ).value = "";
-
-                await loadAccount();
-
-                await loadTransactions();
-
-            } catch (error) {
-
-                showMessage(
-                    "withdrawMessage",
-                    error.message,
-                    "error"
-                );
-
-            } finally {
-
-                setButtonLoading(
-                    "withdrawButton",
-                    false,
-                    "Withdraw Now"
-                );
-            }
-        }
-
-        /* =================================
-           TRANSFER MONEY
-        ================================= */
-
-        async function transferMoney() {
-
-            const recipient = document
-                .getElementById(
-                    "transferAccount"
-                )
-                .value
-                .trim();
-
-            const amount = Number(
-                document.getElementById(
-                    "transferAmount"
-                ).value
-            );
-
-            if (!recipient) {
-
-                showMessage(
-                    "transferMessage",
-                    "Enter the recipient account number.",
-                    "error"
-                );
-
-                return;
-            }
-
-            if (!amount || amount <= 0) {
-
-                showMessage(
-                    "transferMessage",
-                    "Enter a valid transfer amount.",
-                    "error"
-                );
-
-                return;
-            }
-
-            if (
-                !currentAccount ||
-                !currentAccount.id
-            ) {
-
-                showMessage(
-                    "transferMessage",
-                    "Account information is not loaded.",
-                    "error"
-                );
-
-                return;
-            }
-
-            try {
-
-                setButtonLoading(
-                    "transferButton",
-                    true,
-                    "Transfer Now"
-                );
-
-                await apiRequest(
-                    "/transactions/",
-                    "POST",
-                    {
-                        account: currentAccount.id,
-                        transaction_type: "TRANSFER",
-                        amount: amount,
-                        to_account: recipient,
-                        description: "Money transfer"
-                    }
-                );
-
-                showMessage(
-                    "transferMessage",
-                    "Transfer completed successfully.",
-                    "success"
-                );
-
-                document.getElementById(
-                    "transferAccount"
-                ).value = "";
-
-                document.getElementById(
-                    "transferAmount"
-                ).value = "";
-
-                await loadAccount();
-
-                await loadTransactions();
-
-            } catch (error) {
-
-                showMessage(
-                    "transferMessage",
-                    error.message,
-                    "error"
-                );
-
-            } finally {
-
-                setButtonLoading(
-                    "transferButton",
-                    false,
-                    "Transfer Now"
-                );
-            }
-        }
-
-        /* =================================
-           LOAD TRANSACTION HISTORY
-        ================================= */
-
-        async function loadTransactions() {
-
-            const table = document.getElementById(
-                "transactionTable"
-            );
-
-            if (!table) {
-                return;
-            }
-
-            table.innerHTML = `
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('withdrawAmount',500)"
+                >
+                    ₹500
+                </button>
+
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('withdrawAmount',1000)"
+                >
+                    ₹1,000
+                </button>
+
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('withdrawAmount',10000)"
+                >
+                    ₹10,000
+                </button>
+
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('withdrawAmount',100000)"
+                >
+                    ₹1,00,000
+                </button>
+
+            </div>
+
+
+            <button
+                class="danger-button"
+                id="withdrawButton"
+                onclick="withdrawMoney()"
+            >
+                Withdraw Now
+            </button>
+
+            <div
+                id="withdrawMessage"
+                class="form-message"
+            ></div>
+
+        </div>
+
+
+        <!-- TRANSFER -->
+
+        <div
+            class="operation-card"
+            id="transferOperation"
+        >
+
+            <h3>
+                Fund Transfer
+            </h3>
+
+            <p>
+                Transfer money to another account.
+            </p>
+
+
+            <div class="form-group">
+
+                <label>
+                    Beneficiary Account Number
+                </label>
+
+                <input
+                    type="text"
+                    id="transferAccount"
+                    class="form-control"
+                    placeholder="Enter account number"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Amount
+                </label>
+
+                <input
+                    type="number"
+                    id="transferAmount"
+                    class="form-control"
+                    placeholder="Enter amount"
+                    min="1"
+                >
+
+            </div>
+
+
+            <div class="quick-amounts">
+
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('transferAmount',100)"
+                >
+                    ₹100
+                </button>
+
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('transferAmount',200)"
+                >
+                    ₹200
+                </button>
+
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('transferAmount',500)"
+                >
+                    ₹500
+                </button>
+
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('transferAmount',1000)"
+                >
+                    ₹1,000
+                </button>
+
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('transferAmount',10000)"
+                >
+                    ₹10,000
+                </button>
+
+                <button
+                    type="button"
+                    class="quick-amount"
+                    onclick="setAmount('transferAmount',100000)"
+                >
+                    ₹1,00,000
+                </button>
+
+            </div>
+
+
+            <button
+                class="success-button"
+                id="transferButton"
+                onclick="transferMoney()"
+            >
+                Transfer Now
+            </button>
+
+            <div
+                id="transferMessage"
+                class="form-message"
+            ></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section
+    id="transactions"
+    class="transaction-section"
+>
+
+    <div class="section-heading">
+
+        <div>
+
+            <h2>
+                Recent Transactions
+            </h2>
+
+            <span>
+                Your latest account activity
+            </span>
+
+        </div>
+
+        <button
+            class="refresh-button"
+            onclick="loadTransactions()"
+        >
+            ↻ Refresh
+        </button>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
                 <tr>
-                    <td colspan="5" class="empty-state">
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="transactionTable">
+
+                <tr>
+
+                    <td
+                        colspan="5"
+                        class="empty-state"
+                    >
                         Loading transactions...
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<footer>
+
+    <p>
+        © 2026 FinBank. All rights reserved.
+    </p>
+
+    <p>
+        Secure demo banking application
+    </p>
+
+</footer>
+
+
+<script>
+
+const API_BASE = "http://127.0.0.1:8000/api";
+
+let currentAccount = null;
+
+
+/* CHECK LOGIN */
+
+const accessToken = localStorage.getItem("access_token");
+
+if(!accessToken){
+    window.location.href = "login.html";
+}
+
+
+/* TOKEN */
+
+function getToken(){
+
+    return localStorage.getItem("access_token");
+
+}
+
+
+/* FORMAT MONEY */
+
+function formatCurrency(value){
+
+    return "₹" + Number(value || 0).toLocaleString(
+        "en-IN",
+        {
+            minimumFractionDigits:2,
+            maximumFractionDigits:2
+        }
+    );
+
+}
+
+
+/* SET QUICK AMOUNT */
+
+function setAmount(inputId,amount){
+
+    const input = document.getElementById(inputId);
+
+    if(!input){
+        return;
+    }
+
+    input.value = amount;
+
+    input.focus();
+
+}
+
+
+/* API REQUEST */
+
+async function apiRequest(
+    endpoint,
+    method="GET",
+    data=null
+){
+
+    const token = getToken();
+
+    if(!token){
+
+        window.location.href="login.html";
+
+        throw new Error("Login required");
+
+    }
+
+
+    const options = {
+
+        method:method,
+
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer " + token
+        }
+
+    };
+
+
+    if(data !== null){
+
+        options.body = JSON.stringify(data);
+
+    }
+
+
+    const response =
+        await fetch(
+            API_BASE + endpoint,
+            options
+        );
+
+
+    let result = {};
+
+    try{
+
+        result = await response.json();
+
+    }catch{
+
+        result = {};
+
+    }
+
+
+    if(
+        response.status === 401 ||
+        response.status === 403
+    ){
+
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+
+        alert("Session expired. Please login again.");
+
+        window.location.href="login.html";
+
+        throw new Error("Session expired");
+
+    }
+
+
+    if(!response.ok){
+
+        let message =
+            result.detail ||
+            result.error ||
+            result.non_field_errors?.[0] ||
+            Object.values(result).flat()[0] ||
+            "Request failed";
+
+        throw new Error(message);
+
+    }
+
+
+    return result;
+
+}
+
+
+/* SHOW MESSAGE */
+
+function showMessage(
+    id,
+    message,
+    type
+){
+
+    const element =
+        document.getElementById(id);
+
+    element.textContent = message;
+
+    element.className =
+        "form-message " + type;
+
+}
+
+
+/* BUTTON LOADING */
+
+function buttonLoading(
+    id,
+    loading,
+    text
+){
+
+    const button =
+        document.getElementById(id);
+
+    button.disabled = loading;
+
+    button.textContent =
+        loading ? "Processing..." : text;
+
+}
+
+
+/* LOAD ACCOUNT */
+
+async function loadAccount(){
+
+    try{
+
+        const result =
+            await apiRequest("/accounts/");
+
+
+        const accounts =
+            Array.isArray(result)
+                ? result
+                : result.results || [];
+
+
+        if(accounts.length === 0){
+
+            throw new Error(
+                "Account not found"
+            );
+
+        }
+
+
+        currentAccount = accounts[0];
+
+
+        const username =
+            currentAccount.user_username ||
+            currentAccount.username ||
+            currentAccount.user?.username ||
+            "User";
+
+
+        document.getElementById(
+            "userName"
+        ).textContent = username;
+
+
+        document.getElementById(
+            "profileName"
+        ).textContent = username;
+
+
+        document.getElementById(
+            "profileAvatar"
+        ).textContent =
+            username.charAt(0).toUpperCase();
+
+
+        document.getElementById(
+            "balance"
+        ).textContent =
+            formatCurrency(
+                currentAccount.balance
+            );
+
+
+        document.getElementById(
+            "accountNumber"
+        ).textContent =
+            currentAccount.account_number;
+
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* DEPOSIT */
+
+async function depositMoney(){
+
+    const input =
+        document.getElementById(
+            "depositAmount"
+        );
+
+
+    const amount =
+        Number(input.value);
+
+
+    if(!amount || amount <= 0){
+
+        showMessage(
+            "depositMessage",
+            "Enter a valid amount.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!currentAccount){
+
+        showMessage(
+            "depositMessage",
+            "Account is still loading.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        buttonLoading(
+            "depositButton",
+            true,
+            "Deposit Now"
+        );
+
+
+        await apiRequest(
+            "/transactions/",
+            "POST",
+            {
+                account:currentAccount.id,
+
+                transaction_type:"DEPOSIT",
+
+                amount:amount,
+
+                description:"Cash deposit"
+            }
+        );
+
+
+        showMessage(
+            "depositMessage",
+            "Deposit completed successfully.",
+            "success"
+        );
+
+
+        input.value="";
+
+
+        await loadAccount();
+
+        await loadTransactions();
+
+
+    }catch(error){
+
+        showMessage(
+            "depositMessage",
+            error.message,
+            "error"
+        );
+
+
+    }finally{
+
+        buttonLoading(
+            "depositButton",
+            false,
+            "Deposit Now"
+        );
+
+    }
+
+}
+
+
+/* WITHDRAW */
+
+async function withdrawMoney(){
+
+    const input =
+        document.getElementById(
+            "withdrawAmount"
+        );
+
+
+    const amount =
+        Number(input.value);
+
+
+    if(!amount || amount <= 0){
+
+        showMessage(
+            "withdrawMessage",
+            "Enter a valid amount.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!currentAccount){
+
+        showMessage(
+            "withdrawMessage",
+            "Account is still loading.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const balance =
+        Number(
+            currentAccount.balance || 0
+        );
+
+
+    if(amount > balance){
+
+        showMessage(
+            "withdrawMessage",
+            "Insufficient balance.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        buttonLoading(
+            "withdrawButton",
+            true,
+            "Withdraw Now"
+        );
+
+
+        await apiRequest(
+            "/transactions/",
+            "POST",
+            {
+                account:currentAccount.id,
+
+                transaction_type:"WITHDRAWAL",
+
+                amount:amount,
+
+                description:"Cash withdrawal"
+            }
+        );
+
+
+        showMessage(
+            "withdrawMessage",
+            "Withdrawal completed successfully.",
+            "success"
+        );
+
+
+        input.value="";
+
+
+        await loadAccount();
+
+        await loadTransactions();
+
+
+    }catch(error){
+
+        showMessage(
+            "withdrawMessage",
+            error.message,
+            "error"
+        );
+
+
+    }finally{
+
+        buttonLoading(
+            "withdrawButton",
+            false,
+            "Withdraw Now"
+        );
+
+    }
+
+}
+
+
+/* TRANSFER */
+
+async function transferMoney(){
+
+    const account =
+        document.getElementById(
+            "transferAccount"
+        ).value.trim();
+
+
+    const amount =
+        Number(
+            document.getElementById(
+                "transferAmount"
+            ).value
+        );
+
+
+    if(!account){
+
+        showMessage(
+            "transferMessage",
+            "Enter beneficiary account number.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!amount || amount <= 0){
+
+        showMessage(
+            "transferMessage",
+            "Enter a valid amount.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!currentAccount){
+
+        showMessage(
+            "transferMessage",
+            "Account is still loading.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        buttonLoading(
+            "transferButton",
+            true,
+            "Transfer Now"
+        );
+
+
+        await apiRequest(
+            "/transactions/",
+            "POST",
+            {
+                account:currentAccount.id,
+
+                transaction_type:"TRANSFER",
+
+                amount:amount,
+
+                to_account:account,
+
+                description:"Money transfer"
+            }
+        );
+
+
+        showMessage(
+            "transferMessage",
+            "Transfer completed successfully.",
+            "success"
+        );
+
+
+        document.getElementById(
+            "transferAccount"
+        ).value="";
+
+
+        document.getElementById(
+            "transferAmount"
+        ).value="";
+
+
+        await loadAccount();
+
+        await loadTransactions();
+
+
+    }catch(error){
+
+        showMessage(
+            "transferMessage",
+            error.message,
+            "error"
+        );
+
+
+    }finally{
+
+        buttonLoading(
+            "transferButton",
+            false,
+            "Transfer Now"
+        );
+
+    }
+
+}
+
+
+/* TRANSACTIONS */
+
+async function loadTransactions(){
+
+    const table =
+        document.getElementById(
+            "transactionTable"
+        );
+
+
+    try{
+
+        const result =
+            await apiRequest(
+                "/transactions/"
+            );
+
+
+        const transactions =
+            Array.isArray(result)
+                ? result
+                : result.results || [];
+
+
+        table.innerHTML="";
+
+
+        if(transactions.length === 0){
+
+            table.innerHTML=`
+                <tr>
+                    <td colspan="5"
+                        class="empty-state">
+                        No transactions found.
                     </td>
                 </tr>
             `;
 
-            try {
+            return;
 
-                const result = await apiRequest(
-                    "/transactions/"
-                );
+        }
 
-                const transactions = Array.isArray(result)
-                    ? result
-                    : Array.isArray(result.results)
-                        ? result.results
-                        : [];
 
-                table.innerHTML = "";
+        transactions.forEach(
+            transaction => {
 
-                if (transactions.length === 0) {
-
-                    table.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="empty-state">
-                                No transactions found.
-                            </td>
-                        </tr>
-                    `;
-
-                    return;
-                }
-
-                transactions.forEach(transaction => {
-
-                    const row = document.createElement("tr");
-
-                    const type = String(
+                const type =
+                    String(
                         transaction.transaction_type ||
-                        transaction.type ||
                         "TRANSACTION"
                     ).toUpperCase();
 
-                    const amount = Number(
+
+                const amount =
+                    Number(
                         transaction.amount || 0
                     );
 
-                    const date =
-                        transaction.created_at ||
-                        transaction.timestamp ||
-                        transaction.date ||
-                        null;
 
-                    const formattedDate = date
-                        ? new Date(date).toLocaleString(
-                            "en-IN",
-                            {
-                                dateStyle: "medium",
-                                timeStyle: "short"
-                            }
-                        )
+                let typeName =
+                    "Transaction";
+
+                let badge =
+                    "transaction-badge";
+
+                let amountClass =
+                    "amount-negative";
+
+                let sign="-";
+
+
+                if(type === "DEPOSIT"){
+
+                    typeName="Deposit";
+
+                    badge += " deposit";
+
+                    amountClass =
+                        "amount-positive";
+
+                    sign="+";
+
+                }
+
+
+                if(type === "WITHDRAWAL"){
+
+                    typeName="Withdrawal";
+
+                    badge += " withdrawal";
+
+                }
+
+
+                if(type === "TRANSFER"){
+
+                    typeName="Transfer";
+
+                    badge += " transfer";
+
+                }
+
+
+                const date =
+                    transaction.created_at
+                        ? new Date(
+                            transaction.created_at
+                          ).toLocaleString(
+                            "en-IN"
+                          )
                         : "N/A";
 
-                    let displayType = "Transaction";
 
-                    let amountClass = "amount-negative";
+                const description =
+                    transaction.description ||
+                    "Banking transaction";
 
-                    let sign = "-";
 
-                    let badgeClass = "other";
+                const row =
+                    document.createElement("tr");
 
-                    if (type === "DEPOSIT") {
 
-                        displayType = "Deposit";
+                row.innerHTML=`
 
-                        amountClass = "amount-positive";
+                    <td>
+                        <span class="${badge}">
+                            ${typeName}
+                        </span>
+                    </td>
 
-                        sign = "+";
+                    <td class="${amountClass}">
+                        ${sign} ${formatCurrency(amount)}
+                    </td>
 
-                        badgeClass = "deposit";
+                    <td>
+                        ${description}
+                    </td>
 
-                    } else if (type === "WITHDRAWAL") {
+                    <td>
+                        ${date}
+                    </td>
 
-                        displayType = "Withdrawal";
+                    <td>
+                        <span class="completed-badge">
+                            ● Completed
+                        </span>
+                    </td>
 
-                        badgeClass = "withdrawal";
-
-                    } else if (type === "TRANSFER") {
-
-                        displayType = "Transfer";
-
-                        badgeClass = "transfer";
-                    }
-
-                    const description =
-                        transaction.description ||
-                        "Banking transaction";
-
-                    row.innerHTML = `
-                        <td>
-                            <span class="transaction-badge ${badgeClass}">
-                                ${escapeHTML(displayType)}
-                            </span>
-                        </td>
-
-                        <td class="${amountClass}">
-                            ${sign} ${formatCurrency(amount)}
-                        </td>
-
-                        <td>
-                            ${escapeHTML(description)}
-                        </td>
-
-                        <td>
-                            ${escapeHTML(formattedDate)}
-                        </td>
-
-                        <td>
-                            <span class="completed-badge">
-                                ● Completed
-                            </span>
-                        </td>
-                    `;
-
-                    table.appendChild(row);
-
-                });
-
-            } catch (error) {
-
-                console.error(
-                    "Transaction loading error:",
-                    error
-                );
-
-                table.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="empty-state error">
-                            Failed to load transactions.
-                        </td>
-                    </tr>
                 `;
-            }
-        }
 
-        /* =================================
-           UI ACTIONS
-        ================================= */
 
-        function focusOperation(operation) {
-
-            const element = document.getElementById(
-                operation + "Operation"
-            );
-
-            if (!element) {
-                return;
-            }
-
-            element.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-
-            const input = element.querySelector(
-                "input"
-            );
-
-            if (input) {
-                setTimeout(() => input.focus(), 400);
-            }
-        }
-
-        function scrollToTransactions() {
-
-            document.getElementById(
-                "transactions"
-            ).scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-        }
-
-        function showNotificationMessage() {
-
-            alert(
-                "You currently have no new notifications."
-            );
-        }
-
-        function showComingSoon(event) {
-
-            event.preventDefault();
-
-            alert(
-                "This feature will be available soon."
-            );
-        }
-
-        function logout() {
-
-            localStorage.removeItem("access_token");
-
-            localStorage.removeItem("refresh_token");
-
-            window.location.href = "login.html";
-        }
-
-        /* =================================
-           INITIAL PAGE LOAD
-        ================================= */
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            async function() {
-
-                document.getElementById(
-                    "lastLogin"
-                ).textContent = new Date()
-                    .toLocaleString("en-IN");
-
-                await loadAccount();
-
-                await loadTransactions();
+                table.appendChild(row);
 
             }
         );
 
-    </script>
+
+    }catch(error){
+
+        console.error(error);
+
+
+        table.innerHTML=`
+
+            <tr>
+
+                <td
+                    colspan="5"
+                    class="empty-state error"
+                >
+                    Failed to load transactions.
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+}
+
+
+/* QUICK SERVICE SCROLL */
+
+function focusOperation(type){
+
+    const element =
+        document.getElementById(
+            type + "Operation"
+        );
+
+
+    if(!element){
+        return;
+    }
+
+
+    element.scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+    });
+
+
+    setTimeout(
+        () => {
+
+            const input =
+                element.querySelector(
+                    "input"
+                );
+
+            if(input){
+                input.focus();
+            }
+
+        },
+        400
+    );
+
+}
+
+
+/* TRANSACTION SCROLL */
+
+function scrollToTransactions(){
+
+    document.getElementById(
+        "transactions"
+    ).scrollIntoView({
+        behavior:"smooth"
+    });
+
+}
+
+
+/* LOGOUT */
+
+function logout(){
+
+    localStorage.removeItem(
+        "access_token"
+    );
+
+    localStorage.removeItem(
+        "refresh_token"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* START */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function(){
+
+        document.getElementById(
+            "lastLogin"
+        ).textContent =
+            new Date().toLocaleString(
+                "en-IN"
+            );
+
+
+        await loadAccount();
+
+        await loadTransactions();
+
+    }
+);
+
+</script>
 
 </body>
 </html>
