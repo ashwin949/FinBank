@@ -21,6 +21,9 @@ const [withdrawAmount, setWithdrawAmount] = useState("");
 const [transferAmount, setTransferAmount] = useState("");
 const [recipient, setRecipient] = useState("");
 
+const [transactionFilter, setTransactionFilter] = useState("ALL");
+const [transactionSearch, setTransactionSearch] = useState("");
+
 const token = localStorage.getItem("access_token");
 async function login() {
 if (!username || !password) {
@@ -171,46 +174,71 @@ alert("Server error");
 }
 
 async function transferMoney() {
-if (
-!transferAmount ||
-Number(transferAmount) <= 0 ||
-!recipient
-) {
-alert("Enter recipient account number and amount");
-return;
-}
+  if (!recipient.trim()) {
+    alert("Enter recipient account number");
+    return;
+  }
 
-try {
-const response = await fetch(`${API}/transactions/`, {
-method: "POST",
-headers: {
-"Content-Type": "application/json",
-Authorization: `Bearer ${token}`,
-},
-body: JSON.stringify({
-account: account.id,
-transaction_type: "TRANSFER",
-amount: Number(transferAmount),
-to_account: recipient,
-description: "Money transfer",
-}),
-});
+  if (!transferAmount || Number(transferAmount) <= 0) {
+    alert("Enter a valid transfer amount");
+    return;
+  }
 
-if (!response.ok) {
-alert("Transfer failed");
-return;
-}
+  if (!account) {
+    alert("Account information is still loading");
+    return;
+  }
 
-alert("Transfer successful");
+  if (recipient.trim() === account.account_number) {
+    alert("You cannot transfer money to your own account");
+    return;
+  }
 
-setTransferAmount("");
-setRecipient("");
+  if (Number(transferAmount) > Number(account.balance)) {
+    alert("Insufficient balance");
+    return;
+  }
 
-await loadAccount();
-await loadTransactions();
-} catch (error) {
-alert("Server error");
-}
+  try {
+    const response = await fetch(`${API}/transactions/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        account: account.id,
+        transaction_type: "TRANSFER",
+        amount: Number(transferAmount),
+        to_account: recipient.trim(),
+        description: "Money transfer",
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Transfer error:", data);
+      alert(
+        data.detail ||
+        data.error ||
+        "Transfer failed. Please check the recipient account."
+      );
+      return;
+    }
+
+    alert("Transfer successful");
+
+    setTransferAmount("");
+    setRecipient("");
+
+    await loadAccount();
+    await loadTransactions();
+
+  } catch (error) {
+    console.error("Transfer error:", error);
+    alert("Unable to connect to FinBank server");
+  }
 }
 
 function setAmount(type, amount) {
@@ -231,6 +259,21 @@ function logout() {
 localStorage.removeItem("access_token");
 window.location.href = "/";
 }
+
+const filteredTransactions = transactions.filter((transaction) => {
+  const matchesType =
+    transactionFilter === "ALL" ||
+    transaction.transaction_type === transactionFilter;
+
+  const search = transactionSearch.toLowerCase();
+
+  const matchesSearch =
+    transaction.description?.toLowerCase().includes(search) ||
+    transaction.transaction_type?.toLowerCase().includes(search) ||
+    transaction.amount?.toString().includes(search);
+
+  return matchesType && matchesSearch;
+});
 
 const balance = account ? Number(account.balance) : 0;
   
@@ -537,9 +580,7 @@ Transfer Money
 
 <div className="page-title">
 <h1>Bank Statements</h1>
-<p>
-View your complete transaction history.
-</p>
+<p>View and manage your complete transaction history.</p>
 </div>
 
 <div className="statement-card">
@@ -554,17 +595,58 @@ View your complete transaction history.
 <div className="statement-info">
 <span>Current Balance</span>
 <strong>
-₹
-{balance.toLocaleString("en-IN", {
+₹{balance.toLocaleString("en-IN", {
 minimumFractionDigits: 2,
 })}
 </strong>
 </div>
 
+<div className="statement-info">
+<span>Total Transactions</span>
+<strong>
+{transactions.length}
+</strong>
+</div>
+
+</div>
+
+<div className="transaction-controls">
+
+<input
+type="text"
+placeholder="Search transactions..."
+value={transactionSearch}
+onChange={(e) =>
+setTransactionSearch(e.target.value)
+}
+/>
+
+<select
+value={transactionFilter}
+onChange={(e) =>
+setTransactionFilter(e.target.value)
+}
+>
+<option value="ALL">All Transactions</option>
+<option value="DEPOSIT">Deposits</option>
+<option value="WITHDRAWAL">Withdrawals</option>
+<option value="TRANSFER">Transfers</option>
+</select>
+
+<button
+className="refresh-btn"
+onClick={() => {
+loadAccount();
+loadTransactions();
+}}
+>
+Refresh
+</button>
+
 </div>
 
 <TransactionTable
-transactions={transactions}
+transactions={filteredTransactions}
 />
 
 </section>

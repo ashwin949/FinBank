@@ -21,6 +21,64 @@ font-family: inherit;
 button {
 cursor: pointer;
 }
+/* LOGIN PAGE */
+
+.login-page {
+min-height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+background: #f5f7fb;
+padding: 20px;
+}
+
+.login-card {
+width: 100%;
+max-width: 420px;
+background: #ffffff;
+padding: 40px;
+border-radius: 18px;
+box-shadow: 0 10px 30px rgba(20, 33, 61, 0.10);
+text-align: center;
+}
+
+.login-logo {
+width: 120px;
+height: 120px;
+object-fit: contain;
+display: block;
+margin: 0 auto 20px;
+}
+
+.login-card h1 {
+font-size: 28px;
+color: #172033;
+margin-bottom: 10px;
+}
+
+.login-card p {
+color: #7b8494;
+font-size: 14px;
+margin-bottom: 25px;
+}
+
+.login-card input {
+width: 100%;
+padding: 14px;
+border: 1px solid #dce1e9;
+border-radius: 9px;
+outline: none;
+margin-bottom: 15px;
+font-size: 14px;
+}
+
+.login-card input:focus {
+border-color: #1d4ed8;
+}
+
+.login-card .primary-btn {
+margin-top: 5px;
+}
 
 /* HEADER */
 .header {
@@ -218,25 +276,48 @@ font-size: 16px;
 color: #7b8494;
 }
 
-/* TRANSACTIONS */
-.transactions {
-background: #ffffff;
-border-radius: 18px;
-padding: 25px;
-box-shadow: 0 5px 20px rgba(20, 33, 61, 0.05);
+/* TRANSACTION CONTROLS */
+
+.transaction-controls {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 12px;
+  box-shadow: 0 5px 20px rgba(20, 33, 61, 0.05);
 }
 
-.section-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
+.transaction-controls input,
+.transaction-controls select {
+  padding: 12px 14px;
+  border: 1px solid #dce1e9;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+  background: #ffffff;
 }
 
-.view-btn {
-border: none;
-background: transparent;
-color: #1d4ed8;
-font-weight: bold;
+.transaction-controls input {
+  flex: 1;
+}
+
+.transaction-controls input:focus,
+.transaction-controls select:focus {
+  border-color: #1d4ed8;
+}
+
+.refresh-btn {
+  border: none;
+  background: #1d4ed8;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.refresh-btn:hover {
+  background: #163fb0;
 }
 
 /* TABLE */
@@ -482,4 +563,47 @@ grid-template-columns: 1fr;
 .statement-card {
 grid-template-columns: 1fr;
 }
+}
+
+
+.transaction-controls {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 12px;
+  box-shadow: 0 5px 20px rgba(20, 33, 61, 0.05);
+}
+
+.transaction-controls input,
+.transaction-controls select {
+  padding: 12px 14px;
+  border: 1px solid #dce1e9;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+  background: #ffffff;
+}
+
+.transaction-controls input {
+  flex: 1;
+}
+
+.transaction-controls input:focus,
+.transaction-controls select:focus {
+  border-color: #1d4ed8;
+}
+
+.refresh-btn {
+  border: none;
+  background: #1d4ed8;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.refresh-btn:hover {
+  background: #163fb0;
 }
