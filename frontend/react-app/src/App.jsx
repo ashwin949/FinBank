@@ -14,12 +14,31 @@ const [password, setPassword] = useState("");
 
 const [account, setAccount] = useState(null);
 const [transactions, setTransactions] = useState([]);
+const [loading, setLoading] = useState(true);
+const [notification, setNotification] = useState({
+  message: "",
+  type: "",
+});
 const [activePage, setActivePage] = useState("dashboard");
 
 const [depositAmount, setDepositAmount] = useState("");
 const [withdrawAmount, setWithdrawAmount] = useState("");
 const [transferAmount, setTransferAmount] = useState("");
 const [recipient, setRecipient] = useState("");
+
+function showNotification(message, type = "success") {
+  setNotification({
+    message,
+    type,
+  });
+
+  setTimeout(() => {
+    setNotification({
+      message: "",
+      type: "",
+    });
+  }, 3000);
+}
 
 const [transactionFilter, setTransactionFilter] = useState("ALL");
 const [transactionSearch, setTransactionSearch] = useState("");
@@ -59,14 +78,18 @@ window.location.reload();
 alert("Unable to connect to FinBank server");
 }
 }
-
 useEffect(() => {
-if (token) {
-loadAccount();
-loadTransactions();
-}
+  if (token) {
+    Promise.all([
+      loadAccount(),
+      loadTransactions(),
+    ]).finally(() => {
+      setLoading(false);
+    });
+  } else {
+    setLoading(false);
+  }
 }, []);
-
 async function loadAccount() {
 try {
 const response = await fetch(`${API}/accounts/`, {
@@ -105,7 +128,7 @@ console.error("Transaction loading error:", error);
 
 async function depositMoney() {
 if (!depositAmount || Number(depositAmount) <= 0) {
-alert("Enter a valid amount");
+showNotification("Enter a valid amount", "error");
 return;
 }
 
@@ -125,22 +148,27 @@ description: "Cash deposit",
 });
 
 if (!response.ok) {
-alert("Deposit failed");
+showNotification(
+  data.detail ||
+  data.error ||
+  "Deposit failed",
+  "error"
+);
 return;
 }
 
-alert("Deposit successful");
+showNotification("Deposit successful", "success");
 setDepositAmount("");
 await loadAccount();
 await loadTransactions();
 } catch (error) {
-alert("Server error");
+showNotification("Unable to connect to Finbank server", "error");
 }
 }
 
 async function withdrawMoney() {
 if (!withdrawAmount || Number(withdrawAmount) <= 0) {
-alert("Enter a valid amount");
+showNotification("Enter a valid amount", "error");
 return;
 }
 
@@ -160,42 +188,44 @@ description: "Cash withdrawal",
 });
 
 if (!response.ok) {
-alert("Withdrawal failed");
+showNotification("Withdrawal failed", "error");
 return;
 }
 
-alert("Withdrawal successful");
+showNotification("Withdrawal successful", "success");
 setWithdrawAmount("");
 await loadAccount();
 await loadTransactions();
 } catch (error) {
-alert("Server error");
+  console.error("Transfer error:", error);
+
+showNotification("Unable to connect to Finbank server");
 }
 }
 
 async function transferMoney() {
   if (!recipient.trim()) {
-    alert("Enter recipient account number");
+    showNotification("Enter recipient account number", "error");
     return;
   }
 
   if (!transferAmount || Number(transferAmount) <= 0) {
-    alert("Enter a valid transfer amount");
+    showNotification("Enter a valid transfer amount", "error");
     return;
   }
 
   if (!account) {
-    alert("Account information is still loading");
+    showNotification("Account information is still loading", "error");
     return;
   }
 
   if (recipient.trim() === account.account_number) {
-    alert("You cannot transfer money to your own account");
+    showNotification("You cannot transfer money to your own account","error");
     return;
   }
 
   if (Number(transferAmount) > Number(account.balance)) {
-    alert("Insufficient balance");
+    showNotification("Insufficient balance", "error");
     return;
   }
 
@@ -219,7 +249,7 @@ async function transferMoney() {
 
     if (!response.ok) {
       console.error("Transfer error:", data);
-      alert(
+      showNotification(
         data.detail ||
         data.error ||
         "Transfer failed. Please check the recipient account."
@@ -227,7 +257,7 @@ async function transferMoney() {
       return;
     }
 
-    alert("Transfer successful");
+    showNotification("Transfer successful");
 
     setTransferAmount("");
     setRecipient("");
@@ -237,7 +267,7 @@ async function transferMoney() {
 
   } catch (error) {
     console.error("Transfer error:", error);
-    alert("Unable to connect to FinBank server");
+    showNotification("Unable to connect to FinBank server");
   }
 }
 
@@ -256,8 +286,13 @@ setTransferAmount(amount);
 }
 
 function logout() {
-localStorage.removeItem("access_token");
-window.location.href = "/";
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("username");
+
+  setIsLoggedIn(false);
+  setAccount(null);
+  setTransactions([]);
+  setActivePage("dashboard");
 }
 
 const filteredTransactions = transactions.filter((transaction) => {
@@ -276,6 +311,34 @@ const filteredTransactions = transactions.filter((transaction) => {
 });
 
 const balance = account ? Number(account.balance) : 0;
+const totalDeposits = transactions
+  .filter((transaction) => transaction.transaction_type === "DEPOSIT")
+  .reduce((total, transaction) => total + Number(transaction.amount), 0);
+
+const totalWithdrawals = transactions
+  .filter((transaction) => transaction.transaction_type === "WITHDRAWAL")
+  .reduce((total, transaction) => total + Number(transaction.amount), 0);
+
+const totalTransfers = transactions
+  .filter((transaction) => transaction.transaction_type === "TRANSFER")
+  .reduce((total, transaction) => total + Number(transaction.amount), 0);
+
+if (loading && isLoggedIn) {
+  return (
+    <div className="loading-page">
+      <div className="loading-card">
+        <img
+          src="/finbank-logo.png"
+          alt="FinBank"
+          className="login-logo"
+        />
+
+        <h2>Loading FinBank...</h2>
+        <p>Fetching your account information</p>
+      </div>
+    </div>
+  );
+}
   
 if (!isLoggedIn) {
 return (
@@ -319,6 +382,12 @@ Login
 }
 return (
 <div className="app">
+
+  {notification.message && (
+  <div className={`notification ${notification.type}`}>
+    {notification.message}
+  </div>
+)}
 
 {/* HEADER */}
 <header className="header">
@@ -421,6 +490,46 @@ minimumFractionDigits: 2,
 {/* QUICK SERVICES */}
 <section>
 <h2>Quick Services</h2>
+{/* TRANSACTION SUMMARY */}
+<section className="transaction-summary">
+
+  <div className="summary-card">
+    <span>💰</span>
+    <p>Total Deposits</p>
+    <h3>
+      ₹{totalDeposits.toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+      })}
+    </h3>
+  </div>
+
+  <div className="summary-card">
+    <span>💸</span>
+    <p>Total Withdrawals</p>
+    <h3>
+      ₹{totalWithdrawals.toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+      })}
+    </h3>
+  </div>
+
+  <div className="summary-card">
+    <span>↗️</span>
+    <p>Total Transfers</p>
+    <h3>
+      ₹{totalTransfers.toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+      })}
+    </h3>
+  </div>
+
+  <div className="summary-card">
+    <span>📊</span>
+    <p>Total Transactions</p>
+    <h3>{transactions.length}</h3>
+  </div>
+
+</section>
 
 <div className="service-grid">
 
@@ -467,6 +576,7 @@ View All
 
 <TransactionTable
 transactions={transactions.slice(0, 5)}
+showDescription={true}
 />
 
 </section>
@@ -779,86 +889,68 @@ onClick={() => onSelect(amount)}
 );
 }
 
+function TransactionTable({ transactions, showDescription = true }) {
+  if (!transactions.length) {
+    return (
+      <div className="empty">
+        No transactions found.
+      </div>
+    );
+  }
 
-/* TRANSACTION TABLE */
+  return (
+    <div className="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Amount</th>
+            {showDescription && <th>Description</th>}
+          </tr>
+        </thead>
 
-function TransactionTable({ transactions }) {
-if (!transactions.length) {
-return (
-<div className="empty">
-No transactions found.
-</div>
-);
-}
+        <tbody>
+          {transactions.map((transaction) => (
+            <tr key={transaction.id}>
+              <td>
+                {transaction.created_at
+                  ? new Date(transaction.created_at).toLocaleDateString("en-IN")
+                  : "-"}
+              </td>
 
-return (
-<div className="table-container">
+              <td>
+                <span
+                  className={
+                    transaction.transaction_type === "DEPOSIT"
+                      ? "deposit"
+                      : transaction.transaction_type === "WITHDRAWAL"
+                      ? "withdraw"
+                      : "transfer"
+                  }
+                >
+                  {transaction.transaction_type}
+                </span>
+              </td>
 
-<table>
+              <td>
+                ₹
+                {Number(transaction.amount).toLocaleString("en-IN", {
+                  minimumFractionDigits: 2,
+                })}
+              </td>
 
-<thead>
-<tr>
-<th>Date</th>
-<th>Type</th>
-<th>Amount</th>
-<th>Description</th>
-</tr>
-</thead>
-
-<tbody>
-
-{transactions.map((transaction) => (
-
-<tr key={transaction.id}>
-
-<td>
-{transaction.created_at
-? new Date(
-transaction.created_at
-).toLocaleDateString("en-IN")
-: "-"}
-</td>
-
-<td>
-<span
-className={
-transaction.transaction_type ===
-"DEPOSIT"
-? "deposit"
-: transaction.transaction_type ===
-"WITHDRAWAL"
-? "withdraw"
-: "transfer"
-}
->
-{transaction.transaction_type}
-</span>
-</td>
-
-<td>
-₹
-{Number(transaction.amount).toLocaleString(
-"en-IN",
-{
-minimumFractionDigits: 2,
-}
-)}
-</td>
-
-<td>
-{transaction.description || "-"}
-</td>
-
-</tr>
-
-))}
-
-</tbody>
-
-</table>
-
-</div>
-);
+              {showDescription && (
+                <td>
+                  {transaction.description || "-"}
+                </td>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 export default App;
