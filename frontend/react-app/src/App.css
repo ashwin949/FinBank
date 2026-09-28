@@ -1166,3 +1166,9 @@ grid-template-columns: 1fr;
     transform: translateX(0);
   }
 }
+.recent-transactions-title {
+  color: #000000 !important;
+  font-size: 24px;
+  font-weight: 800;
+  opacity: 1 !important;
+}
